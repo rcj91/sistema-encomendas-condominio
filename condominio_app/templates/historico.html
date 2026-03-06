@@ -1,0 +1,30 @@
+
+<h2>Histórico de encomendas</h2>
+
+<table border="1">
+
+<tr>
+<th>ID</th>
+<th>Apto</th>
+<th>Descrição</th>
+<th>Chegada</th>
+<th>Retirada</th>
+<th>Status</th>
+</tr>
+
+{% for p in packages %}
+
+<tr>
+
+<td>{{p[0]}}</td>
+<td>{{p[1]}}</td>
+<td>{{p[2]}}</td>
+<td>{{p[3]}}</td>
+<td>{{p[4]}}</td>
+<td>{{p[5]}}</td>
+
+</tr>
+
+{% endfor %}
+
+</table>

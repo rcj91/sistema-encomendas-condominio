@@ -1,0 +1,97 @@
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<div class="container mt-4">
+
+<h2 class="mb-4">📦 Sistema de Encomendas</h2>
+
+<div class="card mb-4">
+<div class="card-body">
+
+<h5>Registrar nova encomenda</h5>
+
+<form action="/registrar" method="post">
+
+<div class="row">
+
+<div class="col">
+<input class="form-control" name="apartment" placeholder="Apartamento">
+</div>
+
+<div class="col">
+<input class="form-control" name="description" placeholder="Descrição da encomenda">
+</div>
+
+<div class="col">
+    <input class="form-control" name="locker" placeholder="Armário">
+    </div>
+
+<div class="col">
+<button class="btn btn-primary">Registrar</button>
+</div>
+
+</div>
+
+</form>
+
+</div>
+</div>
+
+
+<form method="get" action="/" class="mb-3">
+
+<div class="row">
+
+<div class="col">
+<input class="form-control" type="text" name="q" placeholder="Buscar apartamento ou descrição">
+</div>
+
+<div class="col">
+<button class="btn btn-secondary">Buscar</button>
+<a class="btn btn-outline-secondary" href="/">Limpar</a>
+</div>
+
+</div>
+
+</form>
+
+
+<table class="table table-striped">
+
+<thead>
+<tr>
+<th>Apto</th>
+<th>Descrição</th>
+<th>Chegada</th>
+<th>Tempo</th>
+<th></th>
+</tr>
+</thead>
+
+<tbody>
+
+{% for p in packages %}
+
+<tr>
+
+<td>{{p[1]}}</td>
+<td>{{p[2]}}</td>
+<td>{{p[3]}}</td>
+<td>{{p[4]}}</td>
+
+<td>
+<a class="btn btn-success btn-sm" href="/retirar/{{p[0]}}">
+Retirar
+</a>
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+<a class="btn btn-outline-dark" href="/historico">Histórico</a>
+
+</div>
