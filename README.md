@@ -47,3 +47,56 @@ Este sistema digitaliza todo o fluxo de gestão de encomendas:
 ---
 
 # 📱 Fluxo do Sistema
+
+Recebimento da encomenda
+↓
+Registro no sistema
+↓
+Armazenamento em armário
+↓
+Consulta via QR Code
+↓
+Retirada pelo morador
+↓
+Registro no histórico
+
+---
+
+# 🏢 Benefícios para o Condomínio
+
+- Redução de filas na portaria
+- Menos trabalho manual para porteiros
+- Maior organização das encomendas
+- Histórico digital completo
+- Transparência para síndicos e administradoras
+- Rastreabilidade de todas as entregas
+
+---
+
+# 🛠 Tecnologias Utilizadas
+
+- **Python**
+- **Flask**
+- **SQLite**
+- **HTML / Bootstrap**
+- **QR Code**
+- **Git / GitHub**
+
+---
+
+# 📂 Estrutura do Projeto
+
+condominio_app
+│
+├── app.py
+├── create_db.py
+├── database.db
+├── templates
+│ ├── porteiro.html
+│ ├── morador.html
+│ └── consultar.html
+│
+├── static
+│
+└── README.md
+
