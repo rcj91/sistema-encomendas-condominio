@@ -34,20 +34,20 @@
 
 <form method="get" action="/" class="mb-3">
 
-    <div class="row">
-    
-    <div class="col">
-    <input class="form-control" name="q" placeholder="Buscar apto ou descrição" value="{{q}}">
-    </div>
-    
-    <div class="col">
-    <button class="btn btn-secondary">Buscar</button>
-    <a class="btn btn-outline-secondary" href="/">Limpar</a>
-    </div>
-    
-    </div>
-    
-    </form>
+<div class="row">
+
+<div class="col">
+<input class="form-control" name="q" placeholder="Buscar apto ou descrição" value="{{q}}">
+</div>
+
+<div class="col">
+<button class="btn btn-secondary">Buscar</button>
+<a class="btn btn-outline-secondary" href="/">Limpar</a>
+</div>
+
+</div>
+
+</form>
 
 <table class="table table-striped">
 
@@ -57,6 +57,7 @@
 <th>Armário</th>
 <th>Data de chegada</th>
 <th>Dias na portaria</th>
+<th>Status</th>
 <th>Ação</th>
 </tr>
 
@@ -72,11 +73,25 @@
 
 <td>
 
-<div class="btn-group">
+{% if p.status == "morador_confirmou" %}
 
-<!-- <a class="btn btn-success btn-sm" href="/retirar/{{p.id}}">
-Retirar
-</a> -->
+<span class="badge bg-warning text-dark">
+⚠ Morador confirmou retirada
+</span>
+
+{% else %}
+
+<span class="badge bg-secondary">
+Na portaria
+</span>
+
+{% endif %}
+
+</td>
+
+<!-- <td>
+
+<div class="btn-group">
 
 {% if p.status == "morador_confirmou" %}
 
@@ -89,6 +104,36 @@ Confirmar retirada
 <a class="btn btn-success btn-sm" href="/retirar/{{p.id}}">
 Retirar
 </a>
+
+
+{% endif %}
+
+<a href="/apagar/{{p.id}}" 
+class="btn btn-danger btn-sm"
+onclick="return confirm('Tem certeza que deseja apagar esta encomenda?')">
+Excluir
+</a>
+
+</div>
+
+</td> -->
+
+
+<td>
+
+<div class="btn-group">
+
+{% if p.status == "morador_confirmou" %}
+
+<a class="btn btn-primary btn-sm" href="/confirmar/{{p.id}}">
+Confirmar retirada
+</a>
+
+{% else %}
+
+<span class="badge bg-warning text-dark">
+Aguardando morador
+</span>
 
 {% endif %}
 
@@ -111,3 +156,21 @@ Excluir
 <a class="btn btn-dark mt-3" href="/historico">
 Ver histórico
 </a>
+
+</div>
+
+<script>
+setTimeout(function(){
+   location.reload();
+}, 10000);
+</script>
+
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+
+<script>
+const socket = io();
+
+socket.on("atualizar_painel", function() {
+    location.reload();
+});
+</script>
