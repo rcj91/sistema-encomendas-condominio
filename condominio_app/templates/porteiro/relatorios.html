@@ -164,7 +164,7 @@
             <div class="d-flex align-items-center" style="width: 60%;">
                 <div class="progress flex-fill me-2" style="height: 8px; border-radius: 4px;">
                     <div class="progress-bar" role="progressbar"
-                         style="width: {{ (m.total / monthly[0].total * 100) if monthly[0].total else 0 }}%; background: var(--primary-gradient);">
+                         style="width: {{ (m.total / monthly[0].total * 100) if monthly[0].total > 0 else 0 }}%; background: var(--primary-gradient);">
                     </div>
                 </div>
                 <strong class="text-nowrap">{{ m.total }}</strong>
