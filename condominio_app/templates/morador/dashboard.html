@@ -2,72 +2,80 @@
 {% block title %}Minhas Encomendas — Apto {{ current_user.apartment }}{% endblock %}
 
 {% block content %}
-<h2 class="page-header">
-    <i class="bi bi-house-door me-2"></i>Minhas Encomendas — Apto {{ current_user.apartment }}
-</h2>
+<div class="d-flex align-items-center mb-4">
+    <i class="bi bi-house-door fs-4 text-primary me-2"></i>
+    <h4 class="mb-0 fw-bold">Minhas Encomendas — Apto {{ current_user.apartment }}</h4>
+</div>
 
 <!-- Summary -->
 <div class="row g-3 mb-4">
-    <div class="col-sm-6">
-        <div class="stat-card bg-info p-3">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <div class="stat-label mb-1">Pendentes</div>
-                    <div class="stat-value">{{ pending|length }}</div>
+    <div class="col-6">
+        <div class="card bg-primary text-white border-0 shadow-sm h-100">
+            <div class="card-body py-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="small text-white-50 text-uppercase fw-semibold">Pendentes</div>
+                        <h3 class="mb-0 fw-bold">{{ pending|length }}</h3>
+                    </div>
+                    <i class="bi bi-mailbox2 fs-1 opacity-50"></i>
                 </div>
-                <div class="stat-icon"><i class="bi bi-mailbox2"></i></div>
             </div>
         </div>
     </div>
-    <div class="col-sm-6">
-        <div class="stat-card bg-success p-3">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <div class="stat-label mb-1">Retiradas Recentes</div>
-                    <div class="stat-value">{{ history|length }}</div>
+    <div class="col-6">
+        <div class="card bg-success text-white border-0 shadow-sm h-100">
+            <div class="card-body py-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="small text-white-50 text-uppercase fw-semibold">Retiradas Recentes</div>
+                        <h3 class="mb-0 fw-bold">{{ history|length }}</h3>
+                    </div>
+                    <i class="bi bi-check2-square fs-1 opacity-50"></i>
                 </div>
-                <div class="stat-icon"><i class="bi bi-check2-square"></i></div>
             </div>
         </div>
     </div>
 </div>
 
 <!-- Pending Packages -->
-<div class="card mb-4">
-    <div class="card-header bg-white border-bottom py-3">
-        <h5 class="mb-0 fw-bold text-dark">
+<div class="card shadow-sm mb-4">
+    <div class="card-header py-3">
+        <h6 class="mb-0 fw-bold">
             <i class="bi bi-envelope-paper me-2 text-primary"></i>Encomendas Pendentes
-        </h5>
+        </h6>
     </div>
     <div class="card-body p-0">
         {% if pending %}
             {% for p in pending %}
-            <div class="d-flex justify-content-between align-items-center p-3 {% if not loop.last %}border-bottom{% endif %}">
+            <div class="d-flex justify-content-between align-items-center p-3
+                        {% if not loop.last %}border-bottom{% endif %}">
                 <div class="d-flex align-items-center">
-                    <div class="rounded-3 p-2 me-3" style="background: rgba(102, 126, 234, 0.1);">
+                    <div class="bg-primary bg-opacity-10 rounded p-2 me-3">
                         <i class="bi bi-box-seam fs-4 text-primary"></i>
                     </div>
                     <div>
                         <strong class="d-block">{{ p.description }}</strong>
                         <small class="text-muted">
                             <i class="bi bi-calendar3 me-1"></i>{{ p.arrival_date }}
-                            <span class="mx-1">•</span>
+                            <span class="mx-1">·</span>
                             <i class="bi bi-archive me-1"></i>{{ p.locker or 'Sem armário' }}
-                            <span class="mx-1">•</span>
-                            <span class="badge {% if p.dias > 5 %}bg-danger{% elif p.dias > 3 %}bg-warning text-dark{% else %}bg-success{% endif %} rounded-pill">
+                            <span class="mx-1">·</span>
+                            <span class="badge {% if p.dias > 5 %}bg-danger{% elif p.dias > 3 %}bg-warning text-dark{% else %}bg-success{% endif %}">
                                 {{ p.dias }} dia(s)
                             </span>
                         </small>
                     </div>
                 </div>
-                <div>
+                <div class="ms-2">
                     {% if p.status == 'confirmed' %}
-                        <span class="badge bg-info rounded-pill px-3 py-2">
+                        <span class="badge bg-info px-3 py-2">
                             <i class="bi bi-check-circle-fill me-1"></i>Confirmado
                         </span>
                     {% else %}
-                        <form method="post" action="{{ url_for('morador_confirmar', package_id=p.id) }}" class="d-inline">
-                            <button type="submit" class="btn btn-success btn-sm rounded-pill px-3">
+                        <form method="post"
+                              action="{{ url_for('morador_confirmar', package_id=p.id) }}"
+                              class="d-inline">
+                            <button type="submit" class="btn btn-success btn-sm">
                                 <i class="bi bi-pen me-1"></i>Confirmar Retirada
                             </button>
                         </form>
@@ -85,17 +93,17 @@
 </div>
 
 <!-- History -->
-<div class="card">
-    <div class="card-header bg-white border-bottom py-3">
-        <h5 class="mb-0 fw-bold text-dark">
+<div class="card shadow-sm">
+    <div class="card-header py-3">
+        <h6 class="mb-0 fw-bold">
             <i class="bi bi-clock-history me-2 text-secondary"></i>Histórico de Retiradas
-        </h5>
+        </h6>
     </div>
     <div class="card-body p-0">
         {% if history %}
         <div class="table-responsive">
-            <table class="table table-hover mb-0">
-                <thead>
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
                     <tr>
                         <th>Descrição</th>
                         <th>Armário</th>
@@ -109,8 +117,8 @@
                     <tr>
                         <td>{{ p.description }}</td>
                         <td>{{ p.locker or '—' }}</td>
-                        <td><small>{{ p.arrival_date }}</small></td>
-                        <td><small>{{ p.pickup_date or '—' }}</small></td>
+                        <td><small class="text-muted">{{ p.arrival_date }}</small></td>
+                        <td><small class="text-muted">{{ p.pickup_date or '—' }}</small></td>
                         <td>
                             {% if p.confirmed_by %}
                                 <span class="badge bg-light text-dark border">

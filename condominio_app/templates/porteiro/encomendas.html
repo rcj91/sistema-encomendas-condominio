@@ -3,83 +3,92 @@
 
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="page-header mb-0">
-        <i class="bi bi-box-seam me-2"></i>Gerenciar Encomendas
-    </h2>
-    <div class="d-flex gap-2">
-        <a class="btn btn-dark rounded-pill px-3" href="{{ url_for('porteiro_historico') }}">
-            <i class="bi bi-download me-1"></i> CSV
-        </a>
+    <div class="d-flex align-items-center">
+        <i class="bi bi-box-seam fs-4 text-primary me-2"></i>
+        <h4 class="mb-0 fw-bold">Gerenciar Encomendas</h4>
     </div>
+    <a class="btn btn-outline-secondary btn-sm" href="{{ url_for('porteiro_historico') }}">
+        <i class="bi bi-download me-1"></i>Exportar CSV
+    </a>
 </div>
 
 <!-- Stats -->
 <div class="row g-3 mb-4">
-    <div class="col-sm-4">
-        <div class="stat-card bg-primary p-3">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <div class="stat-label mb-1">Total Pendentes</div>
-                    <div class="stat-value">{{ stats.total }}</div>
+    <div class="col-6 col-md-4">
+        <div class="card bg-primary text-white border-0 shadow-sm h-100">
+            <div class="card-body py-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="small text-white-50 text-uppercase fw-semibold">Total Pendentes</div>
+                        <h3 class="mb-0 fw-bold">{{ stats.total }}</h3>
+                    </div>
+                    <i class="bi bi-inbox-fill fs-1 opacity-50"></i>
                 </div>
-                <div class="stat-icon"><i class="bi bi-inbox-fill"></i></div>
             </div>
         </div>
     </div>
-    <div class="col-sm-4">
-        <div class="stat-card bg-success p-3">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <div class="stat-label mb-1">Chegaram Hoje</div>
-                    <div class="stat-value">{{ stats.hoje }}</div>
+    <div class="col-6 col-md-4">
+        <div class="card bg-success text-white border-0 shadow-sm h-100">
+            <div class="card-body py-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="small text-white-50 text-uppercase fw-semibold">Chegaram Hoje</div>
+                        <h3 class="mb-0 fw-bold">{{ stats.hoje }}</h3>
+                    </div>
+                    <i class="bi bi-truck fs-1 opacity-50"></i>
                 </div>
-                <div class="stat-icon"><i class="bi bi-truck"></i></div>
             </div>
         </div>
     </div>
-    <div class="col-sm-4">
-        <div class="stat-card bg-danger p-3">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <div class="stat-label mb-1">Atrasadas (&gt;5 dias)</div>
-                    <div class="stat-value">{{ stats.atrasadas }}</div>
+    <div class="col-12 col-md-4">
+        <div class="card bg-danger text-white border-0 shadow-sm h-100">
+            <div class="card-body py-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="small text-white-50 text-uppercase fw-semibold">Atrasadas (&gt;5 dias)</div>
+                        <h3 class="mb-0 fw-bold">{{ stats.atrasadas }}</h3>
+                    </div>
+                    <i class="bi bi-exclamation-diamond-fill fs-1 opacity-50"></i>
                 </div>
-                <div class="stat-icon"><i class="bi bi-exclamation-diamond-fill"></i></div>
             </div>
         </div>
     </div>
 </div>
 
 <!-- Registration Form -->
-<div class="card mb-4">
-    <div class="card-body p-4">
-        <h5 class="fw-bold mb-3"><i class="bi bi-plus-circle me-2 text-primary"></i>Registrar nova encomenda</h5>
+<div class="card shadow-sm mb-4">
+    <div class="card-header py-3">
+        <h6 class="mb-0 fw-bold">
+            <i class="bi bi-plus-circle me-2 text-primary"></i>Registrar nova encomenda
+        </h6>
+    </div>
+    <div class="card-body">
         <form action="{{ url_for('porteiro_registrar') }}" method="post">
             <div class="row g-2 align-items-end">
-                <div class="col-md-3">
-                    <label class="form-label small text-muted fw-semibold">Apartamento</label>
+                <div class="col-sm-3">
+                    <label class="form-label small fw-semibold">Apartamento</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-building"></i></span>
                         <input class="form-control" name="apartment" placeholder="Ex: 101" required>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <label class="form-label small text-muted fw-semibold">Descrição</label>
+                <div class="col-sm-3">
+                    <label class="form-label small fw-semibold">Descrição</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-box-seam"></i></span>
                         <input class="form-control" name="description" placeholder="Ex: Amazon" required>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <label class="form-label small text-muted fw-semibold">Armário</label>
+                <div class="col-sm-3">
+                    <label class="form-label small fw-semibold">Armário</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-archive"></i></span>
                         <input class="form-control" name="locker" placeholder="Ex: A1">
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <button class="btn btn-primary w-100" style="height: 38px;">
-                        <i class="bi bi-plus-lg me-1"></i> Registrar
+                <div class="col-sm-3">
+                    <button class="btn btn-primary w-100">
+                        <i class="bi bi-plus-lg me-1"></i>Registrar
                     </button>
                 </div>
             </div>
@@ -88,22 +97,24 @@
 </div>
 
 <!-- Search -->
-<div class="card mb-4">
-    <div class="card-body p-3">
+<div class="card shadow-sm mb-4">
+    <div class="card-body py-2">
         <form method="get" action="{{ url_for('porteiro_encomendas') }}">
             <div class="row g-2 align-items-center">
                 <div class="col-md-8">
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-search"></i></span>
-                        <input class="form-control" name="q" placeholder="Buscar por apto ou descrição..." value="{{ q }}">
+                        <input class="form-control" name="q"
+                               placeholder="Buscar por apto ou descrição..." value="{{ q }}">
                     </div>
                 </div>
                 <div class="col-md-4 d-flex gap-2">
-                    <button class="btn btn-secondary flex-fill">
-                        <i class="bi bi-search me-1"></i> Buscar
+                    <button class="btn btn-primary flex-fill">
+                        <i class="bi bi-search me-1"></i>Buscar
                     </button>
-                    <a class="btn btn-outline-secondary flex-fill" href="{{ url_for('porteiro_encomendas') }}">
-                        <i class="bi bi-x-lg me-1"></i> Limpar
+                    <a class="btn btn-outline-secondary flex-fill"
+                       href="{{ url_for('porteiro_encomendas') }}">
+                        <i class="bi bi-x-lg me-1"></i>Limpar
                     </a>
                 </div>
             </div>
@@ -112,29 +123,29 @@
 </div>
 
 <!-- Packages Table -->
-<div class="card">
+<div class="card shadow-sm">
     <div class="table-responsive">
-        <table class="table table-hover mb-0">
-            <thead>
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
                 <tr>
-                    <th><i class="bi bi-building me-1"></i> Apto</th>
-                    <th><i class="bi bi-box-seam me-1"></i> Encomenda</th>
-                    <th><i class="bi bi-archive me-1"></i> Armário</th>
-                    <th><i class="bi bi-calendar-event me-1"></i> Chegada</th>
-                    <th><i class="bi bi-clock me-1"></i> Dias</th>
-                    <th><i class="bi bi-flag me-1"></i> Status</th>
+                    <th>Apto</th>
+                    <th>Encomenda</th>
+                    <th>Armário</th>
+                    <th>Chegada</th>
+                    <th>Dias</th>
+                    <th>Status</th>
                     <th>Ações</th>
                 </tr>
             </thead>
             <tbody>
                 {% for p in packages %}
-                <tr class="{{ p.cor }}">
+                <tr>
                     <td><strong>{{ p.apartment }}</strong></td>
                     <td>{{ p.description }}</td>
                     <td>{{ p.locker or '—' }}</td>
-                    <td><small>{{ p.arrival }}</small></td>
+                    <td><small class="text-muted">{{ p.arrival }}</small></td>
                     <td>
-                        <span class="badge {% if p.dias > 5 %}bg-danger{% elif p.dias > 3 %}bg-warning text-dark{% else %}bg-success{% endif %} rounded-pill">
+                        <span class="badge {% if p.dias > 5 %}bg-danger{% elif p.dias > 3 %}bg-warning text-dark{% else %}bg-success{% endif %}">
                             {{ p.dias }}d
                         </span>
                     </td>
@@ -142,7 +153,7 @@
                         {% if p.status == 'confirmed' %}
                             <span class="badge bg-info">
                                 <i class="bi bi-check-circle-fill me-1"></i>Confirmado
-                                <br><small>{{ p.confirmed_by }}</small>
+                                {% if p.confirmed_by %}<br><small>{{ p.confirmed_by }}</small>{% endif %}
                             </span>
                         {% else %}
                             <span class="badge bg-warning text-dark">
@@ -153,21 +164,31 @@
                     <td>
                         <div class="d-flex gap-1 flex-wrap">
                             {% if p.status == 'confirmed' %}
-                                <form method="post" action="{{ url_for('porteiro_retirar', package_id=p.id) }}" class="d-inline">
-                                    <button type="submit" class="btn btn-success btn-sm" title="Finalizar retirada">
-                                        <i class="bi bi-check2-all"></i>
+                                <form method="post"
+                                      action="{{ url_for('porteiro_retirar', package_id=p.id) }}"
+                                      class="d-inline">
+                                    <button type="submit" class="btn btn-success btn-sm"
+                                            title="Finalizar retirada">
+                                        <i class="bi bi-check2-all me-1"></i>Retirar
                                     </button>
                                 </form>
                             {% else %}
-                                <form method="post" action="{{ url_for('porteiro_retirar', package_id=p.id) }}" class="d-inline">
-                                    <button type="submit" class="btn btn-outline-secondary btn-sm" title="Retirar manualmente">
-                                        <i class="bi bi-hand-index"></i>
+                                <form method="post"
+                                      action="{{ url_for('porteiro_retirar', package_id=p.id) }}"
+                                      class="d-inline">
+                                    <button type="submit"
+                                            class="btn btn-outline-secondary btn-sm"
+                                            title="Marcar como retirado manualmente">
+                                        <i class="bi bi-hand-index me-1"></i>Manual
                                     </button>
                                 </form>
                             {% endif %}
-                            <form method="post" action="{{ url_for('porteiro_notificar', package_id=p.id) }}" class="d-inline">
-                                <button type="submit" class="btn btn-outline-info btn-sm" title="Enviar e-mail ao morador">
-                                    <i class="bi bi-envelope"></i>
+                            <form method="post"
+                                  action="{{ url_for('porteiro_notificar', package_id=p.id) }}"
+                                  class="d-inline">
+                                <button type="submit" class="btn btn-outline-primary btn-sm"
+                                        title="Enviar e-mail ao morador">
+                                    <i class="bi bi-envelope me-1"></i>Email
                                 </button>
                             </form>
                         </div>

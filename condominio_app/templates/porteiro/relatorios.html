@@ -3,46 +3,53 @@
 
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="page-header mb-0">
-        <i class="bi bi-graph-up me-2"></i>Relatórios e Estatísticas
-    </h2>
-    <a class="btn btn-dark rounded-pill px-4" href="{{ url_for('porteiro_historico') }}">
-        <i class="bi bi-download me-1"></i> Exportar CSV
+    <div class="d-flex align-items-center">
+        <i class="bi bi-graph-up fs-4 text-primary me-2"></i>
+        <h4 class="mb-0 fw-bold">Relatórios e Estatísticas</h4>
+    </div>
+    <a class="btn btn-outline-secondary btn-sm" href="{{ url_for('porteiro_historico') }}">
+        <i class="bi bi-download me-1"></i>Exportar CSV
     </a>
 </div>
 
 <!-- KPIs -->
 <div class="row g-3 mb-4">
-    <div class="col-md-4">
-        <div class="stat-card bg-info p-3">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <div class="stat-label mb-1">Tempo Médio de Retirada</div>
-                    <div class="stat-value">{{ avg_days }}<small class="fs-6"> dias</small></div>
+    <div class="col-6 col-md-4">
+        <div class="card bg-info text-white border-0 shadow-sm h-100">
+            <div class="card-body py-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="small text-white-50 text-uppercase fw-semibold">Tempo Médio de Retirada</div>
+                        <h3 class="mb-0 fw-bold">{{ avg_days }}<small class="fs-6 ms-1">dias</small></h3>
+                    </div>
+                    <i class="bi bi-clock-history fs-1 opacity-50"></i>
                 </div>
-                <div class="stat-icon"><i class="bi bi-clock-history"></i></div>
             </div>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="stat-card bg-primary p-3">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <div class="stat-label mb-1">Total de Apartamentos</div>
-                    <div class="stat-value">{{ per_apt|length }}</div>
+    <div class="col-6 col-md-4">
+        <div class="card bg-primary text-white border-0 shadow-sm h-100">
+            <div class="card-body py-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="small text-white-50 text-uppercase fw-semibold">Total de Apartamentos</div>
+                        <h3 class="mb-0 fw-bold">{{ per_apt|length }}</h3>
+                    </div>
+                    <i class="bi bi-buildings fs-1 opacity-50"></i>
                 </div>
-                <div class="stat-icon"><i class="bi bi-buildings"></i></div>
             </div>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="stat-card bg-success p-3">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <div class="stat-label mb-1">Empresas/Transportadoras</div>
-                    <div class="stat-value">{{ top_carriers|length }}</div>
+    <div class="col-12 col-md-4">
+        <div class="card bg-success text-white border-0 shadow-sm h-100">
+            <div class="card-body py-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="small text-white-50 text-uppercase fw-semibold">Empresas/Transportadoras</div>
+                        <h3 class="mb-0 fw-bold">{{ top_carriers|length }}</h3>
+                    </div>
+                    <i class="bi bi-truck fs-1 opacity-50"></i>
                 </div>
-                <div class="stat-icon"><i class="bi bi-truck"></i></div>
             </div>
         </div>
     </div>
@@ -51,11 +58,11 @@
 <div class="row g-4">
     <!-- Status Breakdown -->
     <div class="col-md-6">
-        <div class="card h-100">
-            <div class="card-header bg-white border-bottom py-3">
-                <h5 class="mb-0 fw-bold text-dark">
+        <div class="card shadow-sm h-100">
+            <div class="card-header py-3">
+                <h6 class="mb-0 fw-bold">
                     <i class="bi bi-pie-chart me-2 text-primary"></i>Distribuição por Status
-                </h5>
+                </h6>
             </div>
             <div class="card-body">
                 {% for s in status_breakdown %}
@@ -72,7 +79,7 @@
                             <span>Retirado</span>
                         {% endif %}
                     </div>
-                    <strong>{{ s.total }}</strong>
+                    <span class="badge bg-secondary rounded-pill">{{ s.total }}</span>
                 </div>
                 {% endfor %}
                 {% if not status_breakdown %}
@@ -84,11 +91,11 @@
 
     <!-- Top Carriers -->
     <div class="col-md-6">
-        <div class="card h-100">
-            <div class="card-header bg-white border-bottom py-3">
-                <h5 class="mb-0 fw-bold text-dark">
-                    <i class="bi bi-trophy me-2 text-success"></i>Empresas mais Frequentes
-                </h5>
+        <div class="card shadow-sm h-100">
+            <div class="card-header py-3">
+                <h6 class="mb-0 fw-bold">
+                    <i class="bi bi-trophy me-2 text-warning"></i>Empresas mais Frequentes
+                </h6>
             </div>
             <div class="card-body">
                 {% for c in top_carriers %}
@@ -108,15 +115,15 @@
 </div>
 
 <!-- Per Apartment -->
-<div class="card mt-4">
-    <div class="card-header bg-white border-bottom py-3">
-        <h5 class="mb-0 fw-bold text-dark">
+<div class="card shadow-sm mt-4">
+    <div class="card-header py-3">
+        <h6 class="mb-0 fw-bold">
             <i class="bi bi-building me-2 text-info"></i>Encomendas por Apartamento
-        </h5>
+        </h6>
     </div>
     <div class="table-responsive">
-        <table class="table table-hover mb-0">
-            <thead>
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
                 <tr>
                     <th>Apartamento</th>
                     <th>Total</th>
@@ -134,7 +141,7 @@
                         {% if a.pendentes > 0 %}
                             <span class="badge bg-warning text-dark rounded-pill">{{ a.pendentes }}</span>
                         {% else %}
-                            <span class="badge bg-light text-muted rounded-pill">0</span>
+                            <span class="badge bg-light text-muted rounded-pill border">0</span>
                         {% endif %}
                     </td>
                 </tr>
@@ -151,18 +158,20 @@
 
 <!-- Monthly Volume -->
 {% if monthly %}
-<div class="card mt-4">
-    <div class="card-header bg-white border-bottom py-3">
-        <h5 class="mb-0 fw-bold text-dark">
+<div class="card shadow-sm mt-4">
+    <div class="card-header py-3">
+        <h6 class="mb-0 fw-bold">
             <i class="bi bi-calendar-range me-2 text-warning"></i>Volume Mensal
-        </h5>
+        </h6>
     </div>
     <div class="card-body">
         {% for m in monthly %}
         <div class="d-flex justify-content-between align-items-center mb-2">
-            <span><i class="bi bi-calendar3 text-muted me-2"></i>{{ m.month }}</span>
-            <div class="d-flex align-items-center" style="width: 60%;">
-                <div class="progress flex-fill me-2" style="height: 8px; border-radius: 4px;">
+            <span class="text-nowrap me-3">
+                <i class="bi bi-calendar3 text-muted me-2"></i>{{ m.month }}
+            </span>
+            <div class="d-flex align-items-center flex-fill">
+                <div class="progress flex-fill me-2" style="height: 8px;">
                     <div class="progress-bar bg-primary" role="progressbar"
                          style="width: {{ (m.total / monthly[0].total * 100) if monthly[0].total > 0 else 0 }}%;">
                     </div>

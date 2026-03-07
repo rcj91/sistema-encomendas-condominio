@@ -3,13 +3,15 @@
 
 {% block content %}
 <div class="d-flex align-items-center mb-4">
-    <a href="{{ url_for('porteiro_usuarios') }}" class="btn btn-outline-secondary btn-sm rounded-pill me-3">
+    <a href="{{ url_for('porteiro_usuarios') }}" class="btn btn-outline-secondary btn-sm me-3">
         <i class="bi bi-arrow-left"></i>
     </a>
-    <h2 class="page-header mb-0">
-        <i class="bi bi-person-{% if user %}gear{% else %}plus{% endif %} me-2"></i>
-        {% if user %}Editar Usuário{% else %}Novo Usuário{% endif %}
-    </h2>
+    <div class="d-flex align-items-center">
+        <i class="bi bi-person-{% if user %}gear{% else %}plus{% endif %} fs-4 text-primary me-2"></i>
+        <h4 class="mb-0 fw-bold">
+            {% if user %}Editar Usuário{% else %}Novo Usuário{% endif %}
+        </h4>
+    </div>
 </div>
 
 <div class="row justify-content-center">
@@ -106,10 +108,10 @@
 
                     <hr>
                     <div class="d-flex justify-content-end gap-2">
-                        <a href="{{ url_for('porteiro_usuarios') }}" class="btn btn-outline-secondary rounded-pill px-4">
+                        <a href="{{ url_for('porteiro_usuarios') }}" class="btn btn-outline-secondary px-4">
                             Cancelar
                         </a>
-                        <button type="submit" class="btn btn-primary rounded-pill px-4">
+                        <button type="submit" class="btn btn-primary px-4">
                             <i class="bi bi-check-lg me-1"></i>
                             {% if user %}Salvar Alterações{% else %}Criar Usuário{% endif %}
                         </button>

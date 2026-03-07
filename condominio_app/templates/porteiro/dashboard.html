@@ -2,108 +2,133 @@
 {% block title %}Portaria — Dashboard{% endblock %}
 
 {% block content %}
-<h2 class="page-header">
-    <i class="bi bi-speedometer2 me-2"></i>Dashboard — Visão Geral
-</h2>
+<div class="d-flex align-items-center mb-4">
+    <i class="bi bi-speedometer2 fs-4 text-primary me-2"></i>
+    <h4 class="mb-0 fw-bold">Dashboard — Visão Geral</h4>
+</div>
 
 <!-- Stats Cards -->
 <div class="row g-3 mb-4">
-    <div class="col-sm-6 col-md-4 col-lg-2">
-        <div class="stat-card bg-primary p-3">
-            <div class="stat-icon mb-2"><i class="bi bi-inbox-fill"></i></div>
-            <div class="stat-value">{{ stats.total_pending }}</div>
-            <div class="stat-label">Pendentes</div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card bg-primary text-white border-0 shadow-sm h-100">
+            <div class="card-body text-center py-3">
+                <i class="bi bi-inbox-fill fs-3 mb-1 d-block opacity-75"></i>
+                <h4 class="mb-0 fw-bold">{{ stats.total_pending }}</h4>
+                <div class="small text-white-50 text-uppercase mt-1">Pendentes</div>
+            </div>
         </div>
     </div>
-    <div class="col-sm-6 col-md-4 col-lg-2">
-        <div class="stat-card bg-success p-3">
-            <div class="stat-icon mb-2"><i class="bi bi-truck"></i></div>
-            <div class="stat-value">{{ stats.total_today }}</div>
-            <div class="stat-label">Hoje</div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card bg-success text-white border-0 shadow-sm h-100">
+            <div class="card-body text-center py-3">
+                <i class="bi bi-truck fs-3 mb-1 d-block opacity-75"></i>
+                <h4 class="mb-0 fw-bold">{{ stats.total_today }}</h4>
+                <div class="small text-white-50 text-uppercase mt-1">Hoje</div>
+            </div>
         </div>
     </div>
-    <div class="col-sm-6 col-md-4 col-lg-2">
-        <div class="stat-card bg-danger p-3">
-            <div class="stat-icon mb-2"><i class="bi bi-exclamation-diamond-fill"></i></div>
-            <div class="stat-value">{{ stats.total_overdue }}</div>
-            <div class="stat-label">Atrasadas</div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card bg-danger text-white border-0 shadow-sm h-100">
+            <div class="card-body text-center py-3">
+                <i class="bi bi-exclamation-diamond-fill fs-3 mb-1 d-block opacity-75"></i>
+                <h4 class="mb-0 fw-bold">{{ stats.total_overdue }}</h4>
+                <div class="small text-white-50 text-uppercase mt-1">Atrasadas</div>
+            </div>
         </div>
     </div>
-    <div class="col-sm-6 col-md-4 col-lg-2">
-        <div class="stat-card bg-info p-3">
-            <div class="stat-icon mb-2"><i class="bi bi-check2-square"></i></div>
-            <div class="stat-value">{{ stats.total_picked }}</div>
-            <div class="stat-label">Retiradas</div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card bg-info text-white border-0 shadow-sm h-100">
+            <div class="card-body text-center py-3">
+                <i class="bi bi-check2-square fs-3 mb-1 d-block opacity-75"></i>
+                <h4 class="mb-0 fw-bold">{{ stats.total_picked }}</h4>
+                <div class="small text-white-50 text-uppercase mt-1">Retiradas</div>
+            </div>
         </div>
     </div>
-    <div class="col-sm-6 col-md-4 col-lg-2">
-        <div class="stat-card bg-warning p-3">
-            <div class="stat-icon mb-2"><i class="bi bi-people-fill"></i></div>
-            <div class="stat-value">{{ stats.total_users }}</div>
-            <div class="stat-label">Moradores</div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card bg-warning text-dark border-0 shadow-sm h-100">
+            <div class="card-body text-center py-3">
+                <i class="bi bi-people-fill fs-3 mb-1 d-block opacity-50"></i>
+                <h4 class="mb-0 fw-bold">{{ stats.total_users }}</h4>
+                <div class="small opacity-75 text-uppercase mt-1">Moradores</div>
+            </div>
         </div>
     </div>
-    <div class="col-sm-6 col-md-4 col-lg-2">
-        <div class="stat-card bg-secondary p-3">
-            <div class="stat-icon mb-2"><i class="bi bi-envelope-fill"></i></div>
-            <div class="stat-value">{{ stats.total_emails }}</div>
-            <div class="stat-label">E-mails</div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card bg-secondary text-white border-0 shadow-sm h-100">
+            <div class="card-body text-center py-3">
+                <i class="bi bi-envelope-fill fs-3 mb-1 d-block opacity-75"></i>
+                <h4 class="mb-0 fw-bold">{{ stats.total_emails }}</h4>
+                <div class="small text-white-50 text-uppercase mt-1">E-mails</div>
+            </div>
         </div>
     </div>
 </div>
 
 <!-- Quick Actions -->
 <div class="row g-3 mb-4">
-    <div class="col-md-3">
-        <a href="{{ url_for('porteiro_encomendas') }}" class="card p-3 text-decoration-none text-dark h-100">
-            <div class="text-center">
-                <i class="bi bi-box-seam fs-1 text-primary"></i>
-                <h6 class="mt-2 mb-0 fw-bold">Encomendas</h6>
-                <small class="text-muted">Registrar e gerenciar</small>
+    <div class="col-6 col-md-3">
+        <div class="card border shadow-sm h-100 text-center">
+            <div class="card-body py-4">
+                <i class="bi bi-box-seam text-primary fs-1 d-block mb-2"></i>
+                <h6 class="fw-bold mb-1">Encomendas</h6>
+                <p class="text-muted small mb-3">Registrar e gerenciar</p>
+                <a href="{{ url_for('porteiro_encomendas') }}" class="btn btn-outline-primary btn-sm stretched-link">
+                    Acessar
+                </a>
             </div>
-        </a>
+        </div>
     </div>
-    <div class="col-md-3">
-        <a href="{{ url_for('porteiro_usuarios') }}" class="card p-3 text-decoration-none text-dark h-100">
-            <div class="text-center">
-                <i class="bi bi-person-plus fs-1 text-success"></i>
-                <h6 class="mt-2 mb-0 fw-bold">Usuários</h6>
-                <small class="text-muted">Cadastrar e editar</small>
+    <div class="col-6 col-md-3">
+        <div class="card border shadow-sm h-100 text-center">
+            <div class="card-body py-4">
+                <i class="bi bi-person-plus text-success fs-1 d-block mb-2"></i>
+                <h6 class="fw-bold mb-1">Usuários</h6>
+                <p class="text-muted small mb-3">Cadastrar e editar</p>
+                <a href="{{ url_for('porteiro_usuarios') }}" class="btn btn-outline-success btn-sm stretched-link">
+                    Acessar
+                </a>
             </div>
-        </a>
+        </div>
     </div>
-    <div class="col-md-3">
-        <a href="{{ url_for('porteiro_emails') }}" class="card p-3 text-decoration-none text-dark h-100">
-            <div class="text-center">
-                <i class="bi bi-envelope-paper fs-1 text-info"></i>
-                <h6 class="mt-2 mb-0 fw-bold">E-mails</h6>
-                <small class="text-muted">Histórico de envios</small>
+    <div class="col-6 col-md-3">
+        <div class="card border shadow-sm h-100 text-center">
+            <div class="card-body py-4">
+                <i class="bi bi-envelope-paper text-info fs-1 d-block mb-2"></i>
+                <h6 class="fw-bold mb-1">E-mails</h6>
+                <p class="text-muted small mb-3">Histórico de envios</p>
+                <a href="{{ url_for('porteiro_emails') }}" class="btn btn-outline-info btn-sm stretched-link">
+                    Acessar
+                </a>
             </div>
-        </a>
+        </div>
     </div>
-    <div class="col-md-3">
-        <a href="{{ url_for('porteiro_relatorios') }}" class="card p-3 text-decoration-none text-dark h-100">
-            <div class="text-center">
-                <i class="bi bi-bar-chart-line fs-1 text-warning"></i>
-                <h6 class="mt-2 mb-0 fw-bold">Relatórios</h6>
-                <small class="text-muted">Estatísticas e dados</small>
+    <div class="col-6 col-md-3">
+        <div class="card border shadow-sm h-100 text-center">
+            <div class="card-body py-4">
+                <i class="bi bi-bar-chart-line text-warning fs-1 d-block mb-2"></i>
+                <h6 class="fw-bold mb-1">Relatórios</h6>
+                <p class="text-muted small mb-3">Estatísticas e dados</p>
+                <a href="{{ url_for('porteiro_relatorios') }}" class="btn btn-outline-warning btn-sm stretched-link">
+                    Acessar
+                </a>
             </div>
-        </a>
+        </div>
     </div>
 </div>
 
 <!-- Recent Activity -->
-<div class="card">
-    <div class="card-header bg-white border-bottom py-3">
-        <h5 class="mb-0 fw-bold text-dark">
+<div class="card shadow-sm">
+    <div class="card-header py-3">
+        <h6 class="mb-0 fw-bold">
             <i class="bi bi-clock-history me-2 text-primary"></i>Atividade Recente
-        </h5>
+        </h6>
     </div>
     <div class="card-body p-0">
         {% if recent %}
         <div class="table-responsive">
-            <table class="table table-hover mb-0">
-                <thead>
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
                     <tr>
                         <th>Apto</th>
                         <th>Encomenda</th>
@@ -117,7 +142,7 @@
                         <td><strong>{{ p.apartment }}</strong></td>
                         <td>{{ p.description }}</td>
                         <td>
-                            <span class="badge {% if p.dias > 5 %}bg-danger{% elif p.dias > 3 %}bg-warning text-dark{% else %}bg-success{% endif %} rounded-pill">
+                            <span class="badge {% if p.dias > 5 %}bg-danger{% elif p.dias > 3 %}bg-warning text-dark{% else %}bg-success{% endif %}">
                                 {{ p.dias }}d
                             </span>
                         </td>
