@@ -116,6 +116,8 @@ def registrar():
     conn.commit()
     conn.close()
 
+    socketio.emit("atualizar_painel")
+
     return redirect("/")
 
 
@@ -387,5 +389,8 @@ def historico():
 # Iniciar servidor
 # -----------------------------------------
 
+# if __name__ == "__main__":
+#     app.run(debug=True)
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    socketio.run(app, debug=True)
