@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}Minhas Encomendas — Apto {{ current_user.apartment }}{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">📦 Minhas Encomendas — Apto {{ current_user.apartment }}</h2>
+
+<!-- Pending Packages -->
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">📬 Encomendas Pendentes</h5>
+    </div>
+    <div class="card-body">
+        {% if pending %}
+        <div class="list-group">
+            {% for p in pending %}
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>{{ p.description }}</strong>
+                    <br>
+                    <small class="text-muted">
+                        Chegou em {{ p.arrival_date }} &bull;
+                        Armário: {{ p.locker or '—' }} &bull;
+                        {{ p.dias }} dia(s)
+                    </small>
+                </div>
+                <div>
+                    {% if p.status == 'confirmed' %}
+                        <span class="badge bg-info">✅ Confirmado</span>
+                    {% else %}
+                        <form method="post" action="{{ url_for('morador_confirmar', package_id=p.id) }}" class="d-inline">
+                            <button type="submit" class="btn btn-success btn-sm">
+                                ✍️ Confirmar Retirada
+                            </button>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-muted text-center mb-0">Nenhuma encomenda pendente 🎉</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- History -->
+<div class="card">
+    <div class="card-header bg-secondary text-white">
+        <h5 class="mb-0">📋 Histórico de Retiradas</h5>
+    </div>
+    <div class="card-body">
+        {% if history %}
+        <div class="table-responsive">
+            <table class="table table-sm table-striped mb-0">
+                <thead>
+                    <tr>
+                        <th>Descrição</th>
+                        <th>Armário</th>
+                        <th>Chegada</th>
+                        <th>Retirada</th>
+                        <th>Confirmado por</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in history %}
+                    <tr>
+                        <td>{{ p.description }}</td>
+                        <td>{{ p.locker or '—' }}</td>
+                        <td>{{ p.arrival_date }}</td>
+                        <td>{{ p.pickup_date or '—' }}</td>
+                        <td>{{ p.confirmed_by or '—' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-muted text-center mb-0">Nenhuma retirada registrada ainda.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

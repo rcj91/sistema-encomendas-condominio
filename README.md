@@ -1,102 +1,106 @@
 # 📦 Sistema de Gestão de Encomendas para Condomínios
 
-Sistema simples e eficiente para **registro, organização e retirada de encomendas em portarias de condomínios para substituir livro físico**.
+Sistema moderno para **registro, confirmação digital e notificação de encomendas** em portarias de condomínios — eliminando por completo a necessidade de assinatura em papel.
 
-A solução digitaliza o processo tradicional de controle em livros físicos, reduzindo filas, erros de registro e facilitando a rastreabilidade das entregas.
+## 🚀 Problema Original
 
----
+- Porteiro registra encomendas em livro físico
+- Moradores precisam assinar papel para retirar
+- Formação de filas na portaria
+- Dificuldade para localizar encomendas
+- Sem notificação — morador só descobre a encomenda quando vai à portaria
+- Histórico difícil de consultar
 
-# 🚀 Problema
+## 💡 Solução (POC)
 
-Em muitos condomínios, o controle de encomendas ainda é feito de forma manual:
+1. **Porteiro** registra a encomenda pelo sistema web
+2. **Morador** recebe notificação por e-mail sobre a chegada
+3. **Morador** acessa o sistema e faz a **confirmação digital** de retirada (sem papel!)
+4. **Porteiro** vê em tempo real as confirmações e o status das encomendas
+5. **Sistema** envia **lembretes automáticos por e-mail** diariamente para encomendas não retiradas
+6. Todo o histórico fica registrado digitalmente
 
-- Porteiro registra encomendas em **livro físico**
-- Moradores precisam **assinar para retirar**
-- Formação de **filas na portaria**
-- **Dificuldade para localizar encomendas**
-- **Histórico difícil de consultar**
+## 🧠 Funcionalidades
 
-Esse processo é lento, sujeito a erros e pouco eficiente.
+### Porteiro
+- ✔ Login seguro com autenticação
+- ✔ Registro de encomendas (apartamento, descrição, armário)
+- ✔ Dashboard com encomendas pendentes e cores por tempo
+- ✔ Busca e filtro por apartamento ou descrição
+- ✔ Visualização de confirmações de retirada dos moradores
+- ✔ Exportação de histórico CSV
 
----
+### Morador
+- ✔ Login seguro com autenticação
+- ✔ Visualização das encomendas pendentes
+- ✔ **Confirmação digital de retirada** (substitui assinatura em papel)
+- ✔ Histórico pessoal de encomendas
 
-# 💡 Solução
+### Sistema
+- ✔ Notificação por e-mail ao registrar encomenda
+- ✔ Lembretes automáticos diários para encomendas pendentes
+- ✔ Senhas armazenadas com hash seguro
+- ✔ Controle de sessão por papel (porteiro/morador)
 
-Este sistema digitaliza todo o fluxo de gestão de encomendas:
+## 🛠 Tecnologias
 
-1️⃣ Porteiro registra a encomenda no sistema  
-2️⃣ Sistema registra data e armário automaticamente  
-3️⃣ Morador consulta a encomenda via **QR Code**  
-4️⃣ Morador digita o número do apartamento  
-5️⃣ Sistema mostra **onde a encomenda está armazenada**  
-6️⃣ Retirada rápida e registrada
+| Componente | Tecnologia |
+|-----------|-----------|
+| Backend | Python / Flask |
+| Banco de Dados | SQLite |
+| Frontend | HTML5 / Bootstrap 5 |
+| Autenticação | Flask-Login + Werkzeug |
+| E-mail | Flask-Mail |
+| Agendamento | APScheduler |
 
----
+## 🚀 Como Executar
 
-# 🧠 Funcionalidades
+### 1. Instalar dependências
 
-✔ Registro de encomendas  
-✔ Controle de **armários de armazenamento**  
-✔ Consulta pelo morador via **QR Code único**  
-✔ Sistema de cores por **tempo de permanência**  
-✔ Histórico de encomendas  
-✔ Exportação de relatório para **Excel / CSV**  
-✔ Busca por apartamento ou descrição  
-✔ Interface simples para porteiros  
+```bash
+pip install -r requirements.txt
+```
 
----
+### 2. Configurar e-mail (opcional para POC)
 
-# 📱 Fluxo do Sistema
+Edite o arquivo `condominio_app/config.py` com as credenciais SMTP:
 
-Recebimento da encomenda
-↓
-Registro no sistema
-↓
-Armazenamento em armário
-↓
-Consulta via QR Code
-↓
-Retirada pelo morador
-↓
-Registro no histórico
+```python
+MAIL_SERVER = 'smtp.gmail.com'
+MAIL_PORT = 587
+MAIL_USERNAME = 'seu-email@gmail.com'
+MAIL_PASSWORD = 'sua-senha-de-app'
+```
 
----
+> Para o POC, o sistema funciona sem configuração de e-mail — os envios serão simulados no log.
 
-# 🏢 Benefícios para o Condomínio
+### 3. Iniciar a aplicação
 
-- Redução de filas na portaria
-- Menos trabalho manual para porteiros
-- Maior organização das encomendas
-- Histórico digital completo
-- Transparência para síndicos e administradoras
-- Rastreabilidade de todas as entregas
+```bash
+cd condominio_app
+python app.py
+```
 
----
+O sistema cria automaticamente o banco de dados e um usuário porteiro padrão no primeiro acesso.
 
-# 🛠 Tecnologias Utilizadas
+### 4. Acessar
 
-- **Python**
-- **Flask**
-- **SQLite**
-- **HTML / Bootstrap**
-- **QR Code**
-- **Git / GitHub**
+| URL | Descrição |
+|-----|-----------|
+| http://localhost:5000/ | Login |
+| http://localhost:5000/porteiro | Dashboard do Porteiro |
+| http://localhost:5000/morador | Dashboard do Morador |
 
----
+### Credenciais padrão (POC)
 
-# 📂 Estrutura do Projeto
+| Papel | Usuário | Senha |
+|-------|---------|-------|
+| Porteiro | porteiro | porteiro123 |
+| Morador | 101 | morador123 |
+| Morador | 102 | morador123 |
+| Morador | 201 | morador123 |
 
-condominio_app
-│
-├── app.py
-├── create_db.py
-├── database.db
-├── templates
-│ ├── porteiro.html
-│ ├── morador.html
-│ └── consultar.html
-│
-├── static
-│
-└── README.md
+## 📐 Arquitetura
+
+Veja o documento completo em [ARCHITECTURE.md](ARCHITECTURE.md).
 

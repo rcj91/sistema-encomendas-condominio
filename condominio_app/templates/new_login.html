@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Login — Encomendas{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5">
+        <div class="card">
+            <div class="card-body p-4">
+                <h3 class="card-title text-center mb-4">📦 Acesso ao Sistema</h3>
+
+                <form method="post" action="{{ url_for('login') }}">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Usuário</label>
+                        <input type="text" class="form-control" id="username" name="username"
+                               placeholder="Porteiro ou nº do apartamento" required autofocus>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Senha</label>
+                        <input type="password" class="form-control" id="password" name="password"
+                               placeholder="Sua senha" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">Entrar</button>
+                </form>
+
+                <hr>
+                <p class="text-muted text-center small mb-0">
+                    Porteiro: use seu login &bull; Morador: use o nº do apartamento
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
