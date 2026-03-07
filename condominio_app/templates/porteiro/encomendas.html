@@ -1,0 +1,210 @@
+{% extends "base.html" %}
+{% block title %}Encomendas — Portaria{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex align-items-center">
+        <i class="bi bi-box-seam fs-4 text-primary me-2"></i>
+        <h4 class="mb-0 fw-bold">Gerenciar Encomendas</h4>
+    </div>
+    <a class="btn btn-outline-secondary btn-sm" href="{{ url_for('porteiro_historico') }}">
+        <i class="bi bi-download me-1"></i>Exportar CSV
+    </a>
+</div>
+
+<!-- Stats -->
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-4">
+        <div class="card bg-primary text-white border-0 shadow-sm h-100">
+            <div class="card-body py-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="small text-white-50 text-uppercase fw-semibold">Total Pendentes</div>
+                        <h3 class="mb-0 fw-bold">{{ stats.total }}</h3>
+                    </div>
+                    <i class="bi bi-inbox-fill fs-1 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4">
+        <div class="card bg-success text-white border-0 shadow-sm h-100">
+            <div class="card-body py-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="small text-white-50 text-uppercase fw-semibold">Chegaram Hoje</div>
+                        <h3 class="mb-0 fw-bold">{{ stats.hoje }}</h3>
+                    </div>
+                    <i class="bi bi-truck fs-1 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-4">
+        <div class="card bg-danger text-white border-0 shadow-sm h-100">
+            <div class="card-body py-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="small text-white-50 text-uppercase fw-semibold">Atrasadas (&gt;5 dias)</div>
+                        <h3 class="mb-0 fw-bold">{{ stats.atrasadas }}</h3>
+                    </div>
+                    <i class="bi bi-exclamation-diamond-fill fs-1 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Registration Form -->
+<div class="card shadow-sm mb-4">
+    <div class="card-header py-3">
+        <h6 class="mb-0 fw-bold">
+            <i class="bi bi-plus-circle me-2 text-primary"></i>Registrar nova encomenda
+        </h6>
+    </div>
+    <div class="card-body">
+        <form action="{{ url_for('porteiro_registrar') }}" method="post">
+            <div class="row g-2 align-items-end">
+                <div class="col-sm-3">
+                    <label class="form-label small fw-semibold">Apartamento</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-building"></i></span>
+                        <input class="form-control" name="apartment" placeholder="Ex: 101" required>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <label class="form-label small fw-semibold">Descrição</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-box-seam"></i></span>
+                        <input class="form-control" name="description" placeholder="Ex: Amazon" required>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <label class="form-label small fw-semibold">Armário</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-archive"></i></span>
+                        <input class="form-control" name="locker" placeholder="Ex: A1">
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <button class="btn btn-primary w-100">
+                        <i class="bi bi-plus-lg me-1"></i>Registrar
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Search -->
+<div class="card shadow-sm mb-4">
+    <div class="card-body py-2">
+        <form method="get" action="{{ url_for('porteiro_encomendas') }}">
+            <div class="row g-2 align-items-center">
+                <div class="col-md-8">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-search"></i></span>
+                        <input class="form-control" name="q"
+                               placeholder="Buscar por apto ou descrição..." value="{{ q }}">
+                    </div>
+                </div>
+                <div class="col-md-4 d-flex gap-2">
+                    <button class="btn btn-primary flex-fill">
+                        <i class="bi bi-search me-1"></i>Buscar
+                    </button>
+                    <a class="btn btn-outline-secondary flex-fill"
+                       href="{{ url_for('porteiro_encomendas') }}">
+                        <i class="bi bi-x-lg me-1"></i>Limpar
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Packages Table -->
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Apto</th>
+                    <th>Encomenda</th>
+                    <th>Armário</th>
+                    <th>Chegada</th>
+                    <th>Dias</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in packages %}
+                <tr>
+                    <td><strong>{{ p.apartment }}</strong></td>
+                    <td>{{ p.description }}</td>
+                    <td>{{ p.locker or '—' }}</td>
+                    <td><small class="text-muted">{{ p.arrival }}</small></td>
+                    <td>
+                        <span class="badge {% if p.dias > 5 %}bg-danger{% elif p.dias > 3 %}bg-warning text-dark{% else %}bg-success{% endif %}">
+                            {{ p.dias }}d
+                        </span>
+                    </td>
+                    <td>
+                        {% if p.status == 'confirmed' %}
+                            <span class="badge bg-info">
+                                <i class="bi bi-check-circle-fill me-1"></i>Confirmado
+                                {% if p.confirmed_by %}<br><small>{{ p.confirmed_by }}</small>{% endif %}
+                            </span>
+                        {% else %}
+                            <span class="badge bg-warning text-dark">
+                                <i class="bi bi-hourglass-split me-1"></i>Aguardando
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="d-flex gap-1 flex-wrap">
+                            {% if p.status == 'confirmed' %}
+                                <form method="post"
+                                      action="{{ url_for('porteiro_retirar', package_id=p.id) }}"
+                                      class="d-inline">
+                                    <button type="submit" class="btn btn-success btn-sm"
+                                            title="Finalizar retirada">
+                                        <i class="bi bi-check2-all me-1"></i>Retirar
+                                    </button>
+                                </form>
+                            {% else %}
+                                <form method="post"
+                                      action="{{ url_for('porteiro_retirar', package_id=p.id) }}"
+                                      class="d-inline">
+                                    <button type="submit"
+                                            class="btn btn-outline-secondary btn-sm"
+                                            title="Marcar como retirado manualmente">
+                                        <i class="bi bi-hand-index me-1"></i>Manual
+                                    </button>
+                                </form>
+                            {% endif %}
+                            <form method="post"
+                                  action="{{ url_for('porteiro_notificar', package_id=p.id) }}"
+                                  class="d-inline">
+                                <button type="submit" class="btn btn-outline-primary btn-sm"
+                                        title="Enviar e-mail ao morador">
+                                    <i class="bi bi-envelope me-1"></i>Email
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% if not packages %}
+                <tr>
+                    <td colspan="7" class="text-center text-muted py-5">
+                        <i class="bi bi-emoji-smile fs-1 d-block mb-2 opacity-50"></i>
+                        Nenhuma encomenda pendente
+                    </td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
