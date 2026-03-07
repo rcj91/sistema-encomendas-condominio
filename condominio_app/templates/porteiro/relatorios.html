@@ -14,7 +14,7 @@
 <!-- KPIs -->
 <div class="row g-3 mb-4">
     <div class="col-md-4">
-        <div class="stat-card p-3" style="background: var(--info-gradient);">
+        <div class="stat-card bg-info p-3">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
                     <div class="stat-label mb-1">Tempo Médio de Retirada</div>
@@ -25,7 +25,7 @@
         </div>
     </div>
     <div class="col-md-4">
-        <div class="stat-card p-3" style="background: var(--primary-gradient);">
+        <div class="stat-card bg-primary p-3">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
                     <div class="stat-label mb-1">Total de Apartamentos</div>
@@ -36,7 +36,7 @@
         </div>
     </div>
     <div class="col-md-4">
-        <div class="stat-card p-3" style="background: var(--success-gradient);">
+        <div class="stat-card bg-success p-3">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
                     <div class="stat-label mb-1">Empresas/Transportadoras</div>
@@ -52,9 +52,9 @@
     <!-- Status Breakdown -->
     <div class="col-md-6">
         <div class="card h-100">
-            <div class="card-header border-0 py-3" style="background: var(--primary-gradient); border-radius: 12px 12px 0 0;">
-                <h5 class="mb-0 text-white fw-bold">
-                    <i class="bi bi-pie-chart me-2"></i>Distribuição por Status
+            <div class="card-header bg-white border-bottom py-3">
+                <h5 class="mb-0 fw-bold text-dark">
+                    <i class="bi bi-pie-chart me-2 text-primary"></i>Distribuição por Status
                 </h5>
             </div>
             <div class="card-body">
@@ -85,9 +85,9 @@
     <!-- Top Carriers -->
     <div class="col-md-6">
         <div class="card h-100">
-            <div class="card-header border-0 py-3" style="background: var(--success-gradient); border-radius: 12px 12px 0 0;">
-                <h5 class="mb-0 text-white fw-bold">
-                    <i class="bi bi-trophy me-2"></i>Empresas mais Frequentes
+            <div class="card-header bg-white border-bottom py-3">
+                <h5 class="mb-0 fw-bold text-dark">
+                    <i class="bi bi-trophy me-2 text-success"></i>Empresas mais Frequentes
                 </h5>
             </div>
             <div class="card-body">
@@ -109,19 +109,19 @@
 
 <!-- Per Apartment -->
 <div class="card mt-4">
-    <div class="card-header border-0 py-3" style="background: var(--info-gradient); border-radius: 12px 12px 0 0;">
-        <h5 class="mb-0 text-white fw-bold">
-            <i class="bi bi-building me-2"></i>Encomendas por Apartamento
+    <div class="card-header bg-white border-bottom py-3">
+        <h5 class="mb-0 fw-bold text-dark">
+            <i class="bi bi-building me-2 text-info"></i>Encomendas por Apartamento
         </h5>
     </div>
     <div class="table-responsive">
         <table class="table table-hover mb-0">
             <thead>
-                <tr style="background: #f8f9fa;">
-                    <th class="fw-semibold text-muted small text-uppercase" style="border:none; padding: 0.75rem 1rem;">Apartamento</th>
-                    <th class="fw-semibold text-muted small text-uppercase" style="border:none; padding: 0.75rem 1rem;">Total</th>
-                    <th class="fw-semibold text-muted small text-uppercase" style="border:none; padding: 0.75rem 1rem;">Retiradas</th>
-                    <th class="fw-semibold text-muted small text-uppercase" style="border:none; padding: 0.75rem 1rem;">Pendentes</th>
+                <tr>
+                    <th>Apartamento</th>
+                    <th>Total</th>
+                    <th>Retiradas</th>
+                    <th>Pendentes</th>
                 </tr>
             </thead>
             <tbody>
@@ -152,9 +152,9 @@
 <!-- Monthly Volume -->
 {% if monthly %}
 <div class="card mt-4">
-    <div class="card-header border-0 py-3" style="background: var(--warning-gradient); border-radius: 12px 12px 0 0;">
-        <h5 class="mb-0 text-white fw-bold">
-            <i class="bi bi-calendar-range me-2"></i>Volume Mensal
+    <div class="card-header bg-white border-bottom py-3">
+        <h5 class="mb-0 fw-bold text-dark">
+            <i class="bi bi-calendar-range me-2 text-warning"></i>Volume Mensal
         </h5>
     </div>
     <div class="card-body">
@@ -163,8 +163,8 @@
             <span><i class="bi bi-calendar3 text-muted me-2"></i>{{ m.month }}</span>
             <div class="d-flex align-items-center" style="width: 60%;">
                 <div class="progress flex-fill me-2" style="height: 8px; border-radius: 4px;">
-                    <div class="progress-bar" role="progressbar"
-                         style="width: {{ (m.total / monthly[0].total * 100) if monthly[0].total > 0 else 0 }}%; background: var(--primary-gradient);">
+                    <div class="progress-bar bg-primary" role="progressbar"
+                         style="width: {{ (m.total / monthly[0].total * 100) if monthly[0].total > 0 else 0 }}%;">
                     </div>
                 </div>
                 <strong class="text-nowrap">{{ m.total }}</strong>

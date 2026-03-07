@@ -3,94 +3,75 @@
 
 {% block extra_css %}
 <style>
-    body { background: var(--primary-gradient); min-height: 100vh; }
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+    }
     .navbar { display: none; }
     footer { display: none; }
     .login-card {
-        border-radius: 20px;
-        backdrop-filter: blur(10px);
-        background: rgba(255, 255, 255, 0.95);
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        border-radius: 14px;
+        background: #fff;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
         overflow: hidden;
     }
     .login-header {
-        background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
-        padding: 2rem;
+        background: linear-gradient(135deg, #343a40 0%, #495057 100%);
+        padding: 1.75rem 2rem;
         text-align: center;
         color: #fff;
     }
     .login-header .icon-circle {
-        width: 70px;
-        height: 70px;
+        width: 60px;
+        height: 60px;
         border-radius: 50%;
         background: rgba(255, 255, 255, 0.15);
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        margin-bottom: 0.75rem;
+        margin-bottom: 0.6rem;
     }
     .login-header .icon-circle i {
-        font-size: 1.8rem;
+        font-size: 1.6rem;
     }
     .login-body {
-        padding: 2rem 2.5rem 2.5rem;
-    }
-    .login-body .form-floating {
-        margin-bottom: 1rem;
-    }
-    .login-body .form-floating .form-control {
-        border-radius: 10px;
-        height: 3.2rem;
-    }
-    .login-body .form-floating label {
-        color: #6c757d;
-    }
-    .login-body .btn-login {
-        height: 3rem;
-        font-size: 1rem;
-        font-weight: 600;
-        border-radius: 10px;
-        background: var(--primary-gradient);
-        border: none;
-        letter-spacing: 0.5px;
-    }
-    .login-body .btn-login:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        padding: 1.75rem 2rem 2rem;
     }
     .login-footer {
-        font-size: 0.82rem;
+        font-size: 0.8rem;
         color: #6c757d;
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="row justify-content-center align-items-center" style="min-height: 90vh;">
-    <div class="col-11 col-sm-8 col-md-5 col-lg-4">
+<div class="d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+    <div class="w-100" style="max-width: 400px; padding: 1rem;">
         <div class="login-card">
             <div class="login-header">
                 <div class="icon-circle">
                     <i class="bi bi-box-seam-fill"></i>
                 </div>
-                <h4 class="mb-1 fw-bold">Sistema de Encomendas</h4>
+                <h5 class="mb-1 fw-bold">Sistema de Encomendas</h5>
                 <p class="mb-0 opacity-75 small">Acesse sua conta para continuar</p>
             </div>
             <div class="login-body">
                 <form method="post" action="{{ url_for('login') }}">
-                    <div class="form-floating">
+                    <div class="mb-3">
+                        <label for="username" class="form-label small fw-semibold text-muted">
+                            <i class="bi bi-person me-1"></i>Usuário
+                        </label>
                         <input type="text" class="form-control" id="username" name="username"
-                               placeholder="Usuário" required autofocus>
-                        <label for="username"><i class="bi bi-person me-1"></i> Usuário</label>
+                               placeholder="Seu usuário ou nº do apto" required autofocus>
                     </div>
-
-                    <div class="form-floating">
+                    <div class="mb-3">
+                        <label for="password" class="form-label small fw-semibold text-muted">
+                            <i class="bi bi-lock me-1"></i>Senha
+                        </label>
                         <input type="password" class="form-control" id="password" name="password"
-                               placeholder="Senha" required>
-                        <label for="password"><i class="bi bi-lock me-1"></i> Senha</label>
+                               placeholder="Sua senha" required>
                     </div>
-
-                    <button type="submit" class="btn btn-primary btn-login w-100 mt-2">
+                    <button type="submit" class="btn btn-primary w-100 mt-1">
                         <i class="bi bi-arrow-right-circle me-1"></i> Entrar
                     </button>
                 </form>

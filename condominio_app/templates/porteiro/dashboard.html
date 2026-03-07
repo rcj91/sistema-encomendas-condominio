@@ -8,43 +8,43 @@
 
 <!-- Stats Cards -->
 <div class="row g-3 mb-4">
-    <div class="col-md-4 col-lg-2">
-        <div class="stat-card p-3" style="background: var(--primary-gradient);">
+    <div class="col-sm-6 col-md-4 col-lg-2">
+        <div class="stat-card bg-primary p-3">
             <div class="stat-icon mb-2"><i class="bi bi-inbox-fill"></i></div>
             <div class="stat-value">{{ stats.total_pending }}</div>
             <div class="stat-label">Pendentes</div>
         </div>
     </div>
-    <div class="col-md-4 col-lg-2">
-        <div class="stat-card p-3" style="background: var(--success-gradient);">
+    <div class="col-sm-6 col-md-4 col-lg-2">
+        <div class="stat-card bg-success p-3">
             <div class="stat-icon mb-2"><i class="bi bi-truck"></i></div>
             <div class="stat-value">{{ stats.total_today }}</div>
             <div class="stat-label">Hoje</div>
         </div>
     </div>
-    <div class="col-md-4 col-lg-2">
-        <div class="stat-card p-3" style="background: var(--danger-gradient);">
+    <div class="col-sm-6 col-md-4 col-lg-2">
+        <div class="stat-card bg-danger p-3">
             <div class="stat-icon mb-2"><i class="bi bi-exclamation-diamond-fill"></i></div>
             <div class="stat-value">{{ stats.total_overdue }}</div>
             <div class="stat-label">Atrasadas</div>
         </div>
     </div>
-    <div class="col-md-4 col-lg-2">
-        <div class="stat-card p-3" style="background: var(--info-gradient);">
+    <div class="col-sm-6 col-md-4 col-lg-2">
+        <div class="stat-card bg-info p-3">
             <div class="stat-icon mb-2"><i class="bi bi-check2-square"></i></div>
             <div class="stat-value">{{ stats.total_picked }}</div>
             <div class="stat-label">Retiradas</div>
         </div>
     </div>
-    <div class="col-md-4 col-lg-2">
-        <div class="stat-card p-3" style="background: var(--warning-gradient);">
+    <div class="col-sm-6 col-md-4 col-lg-2">
+        <div class="stat-card bg-warning p-3">
             <div class="stat-icon mb-2"><i class="bi bi-people-fill"></i></div>
             <div class="stat-value">{{ stats.total_users }}</div>
             <div class="stat-label">Moradores</div>
         </div>
     </div>
-    <div class="col-md-4 col-lg-2">
-        <div class="stat-card p-3" style="background: linear-gradient(135deg, #7f53ac 0%, #647dee 100%);">
+    <div class="col-sm-6 col-md-4 col-lg-2">
+        <div class="stat-card bg-secondary p-3">
             <div class="stat-icon mb-2"><i class="bi bi-envelope-fill"></i></div>
             <div class="stat-value">{{ stats.total_emails }}</div>
             <div class="stat-label">E-mails</div>
@@ -94,9 +94,9 @@
 
 <!-- Recent Activity -->
 <div class="card">
-    <div class="card-header border-0 py-3" style="background: var(--primary-gradient); border-radius: 12px 12px 0 0;">
-        <h5 class="mb-0 text-white fw-bold">
-            <i class="bi bi-clock-history me-2"></i>Atividade Recente
+    <div class="card-header bg-white border-bottom py-3">
+        <h5 class="mb-0 fw-bold text-dark">
+            <i class="bi bi-clock-history me-2 text-primary"></i>Atividade Recente
         </h5>
     </div>
     <div class="card-body p-0">
@@ -104,11 +104,11 @@
         <div class="table-responsive">
             <table class="table table-hover mb-0">
                 <thead>
-                    <tr style="background: #f8f9fa;">
-                        <th class="fw-semibold text-muted small text-uppercase" style="border: none; padding: 0.75rem 1rem;">Apto</th>
-                        <th class="fw-semibold text-muted small text-uppercase" style="border: none; padding: 0.75rem 1rem;">Encomenda</th>
-                        <th class="fw-semibold text-muted small text-uppercase" style="border: none; padding: 0.75rem 1rem;">Dias</th>
-                        <th class="fw-semibold text-muted small text-uppercase" style="border: none; padding: 0.75rem 1rem;">Status</th>
+                    <tr>
+                        <th>Apto</th>
+                        <th>Encomenda</th>
+                        <th>Dias</th>
+                        <th>Status</th>
                     </tr>
                 </thead>
                 <tbody>
