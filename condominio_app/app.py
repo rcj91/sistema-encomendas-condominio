@@ -638,5 +638,5 @@ def morador_confirmar(package_id):
 if __name__ == "__main__":
     init_scheduler(app)
     host = os.environ.get("FLASK_HOST", "127.0.0.1")
-    port = int(os.environ.get("FLASK_PORT", 5000))
+    port = int(os.environ.get("FLASK_PORT", 5001))
     app.run(debug=False, host=host, port=port)
