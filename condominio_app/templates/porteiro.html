@@ -57,7 +57,7 @@
 <th>Armário</th>
 <th>Data de chegada</th>
 <th>Dias na portaria</th>
-<th></th>
+<th>Ação</th>
 </tr>
 
 {% for p in packages %}
@@ -71,15 +71,43 @@
 <td>{{p.dias}}</td>
 
 <td>
+
+<div class="btn-group">
+
+<!-- <a class="btn btn-success btn-sm" href="/retirar/{{p.id}}">
+Retirar
+</a> -->
+
+{% if p.status == "morador_confirmou" %}
+
+<a class="btn btn-primary btn-sm" href="/confirmar/{{p.id}}">
+Confirmar retirada
+</a>
+
+{% else %}
+
 <a class="btn btn-success btn-sm" href="/retirar/{{p.id}}">
 Retirar
 </a>
+
+{% endif %}
+
+<a href="/apagar/{{p.id}}" 
+class="btn btn-danger btn-sm"
+onclick="return confirm('Tem certeza que deseja apagar esta encomenda?')">
+Excluir
+</a>
+
+</div>
+
 </td>
 
 </tr>
 
 {% endfor %}
 
+</table>
+
 <a class="btn btn-dark mt-3" href="/historico">
-    Ver histórico
-    </a>
+Ver histórico
+</a>

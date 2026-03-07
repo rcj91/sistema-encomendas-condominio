@@ -105,20 +105,47 @@ def registrar():
     return redirect("/")
 
 
-@app.route("/retirar/<id>")
+# @app.route("/retirar/<int:id>")
+# def retirar(id):
+
+#     apt = request.args.get("apt")   # ← pega o apartamento da URL
+
+#     conn = conectar()
+#     cursor = conn.cursor()
+
+#     cursor.execute("""
+#     UPDATE packages
+#     SET status='picked_up',
+#         pickup_date=?
+#     WHERE id=?
+#     """,(datetime.now(), id))
+
+#     conn.commit()
+#     conn.close()
+
+#     # return redirect(f"/consultar?apt={apt}&msg=ok")
+#     return redirect(request.referrer)
+
+@app.route("/retirar/<int:id>")
 def retirar(id):
+
+    apt = request.args.get("apt")
 
     conn = conectar()
     cursor = conn.cursor()
 
     cursor.execute("""
     UPDATE packages
-    SET status='picked_up', pickup_date=?
+    SET status='morador_confirmou',
+        pickup_date=?
     WHERE id=?
-    """,(datetime.now(),id))
+    """,(datetime.now(), id))
 
     conn.commit()
     conn.close()
+
+    if apt:
+        return redirect(f"/consultar?apt={apt}")
 
     return redirect("/")
 
@@ -219,29 +246,67 @@ def historico():
 @app.route("/consultar", methods=["GET","POST"])
 def consultar():
 
+    apt = request.args.get("apt")
+    msg = request.args.get("msg")
     if request.method == "POST":
-
         apt = request.form["apartment"]
+
+    if apt:
 
         conn = conectar()
         cursor = conn.cursor()
 
         cursor.execute("""
-        SELECT * FROM packages
+        SELECT *
+        FROM packages
         WHERE apartment=? AND status='arrived'
         """,(apt,))
 
         packages = cursor.fetchall()
-
         conn.close()
 
         return render_template(
             "morador.html",
             packages=packages,
-            apartment=apt
+            apartment=apt,
+            msg=msg
         )
 
     return render_template("consultar.html")
+
+
+@app.route("/apagar/<int:id>")
+def apagar(id):
+
+    conn = conectar()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    DELETE FROM packages
+    WHERE id=? AND status='arrived'
+    """,(id,))
+
+    conn.commit()
+    conn.close()
+
+    return redirect("/")
+
+@app.route("/confirmar/<int:id>")
+def confirmar(id):
+
+    conn = conectar()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    UPDATE packages
+    SET status='finalizado'
+    WHERE id=?
+    """,(id,))
+
+    conn.commit()
+    conn.close()
+
+    return redirect("/")
 
 
 

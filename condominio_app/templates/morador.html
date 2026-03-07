@@ -6,15 +6,32 @@
 
 <h5>Apartamento {{apartment}}</h5>
 
+{% if msg == "ok" %}
+
+<div class="alert alert-success mt-3">
+✔ Encomenda retirada com sucesso
+</div>
+
+{% endif %}
+
+
+{% if packages|length == 0 %}
+
+<div class="alert alert-info mt-3">
+📭 Não há encomendas para este apartamento
+</div>
+
+{% else %}
+
 <ul class="list-group mt-3">
 
 {% for p in packages %}
 
-<li class="list-group-item d-flex justify-content-between">
+<li class="list-group-item d-flex justify-content-between align-items-center">
 
 <span>{{p[2]}}</span>
 
-<a class="btn btn-success btn-sm" href="/retirar/{{p[0]}}">
+<a href="/retirar/{{p[0]}}?apt={{apartment}}" class="btn btn-success">
 Confirmar retirada
 </a>
 
@@ -23,5 +40,7 @@ Confirmar retirada
 {% endfor %}
 
 </ul>
+
+{% endif %}
 
 </div>
