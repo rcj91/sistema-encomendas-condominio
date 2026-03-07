@@ -1,7 +1,6 @@
 """Tests for the condominium package management system."""
 import os
 import sys
-import tempfile
 
 import pytest
 
@@ -53,12 +52,12 @@ class TestAuth:
     def test_login_page_loads(self, client):
         resp = client.get("/login")
         assert resp.status_code == 200
-        assert "Acesso ao Sistema".encode() in resp.data
+        assert "Sistema de Encomendas".encode() in resp.data
 
     def test_login_porteiro_success(self, client):
         resp = _login(client, "porteiro", "porteiro123")
         assert resp.status_code == 200
-        assert "Portaria".encode() in resp.data
+        assert "Dashboard".encode() in resp.data
 
     def test_login_morador_success(self, client):
         resp = _login(client, "101", "morador123")
@@ -80,13 +79,31 @@ class TestAuth:
 
 
 # ---------------------------------------------------------------------------
-# Porteiro routes tests
+# Porteiro Dashboard tests
 # ---------------------------------------------------------------------------
 
-class TestPorteiro:
+class TestPorteiroDashboard:
     def test_dashboard_loads(self, client):
         _login(client, "porteiro", "porteiro123")
         resp = client.get("/porteiro")
+        assert resp.status_code == 200
+        assert "Dashboard".encode() in resp.data
+
+    def test_dashboard_shows_stats(self, client):
+        _login(client, "porteiro", "porteiro123")
+        resp = client.get("/porteiro")
+        assert resp.status_code == 200
+        assert "Pendentes".encode() in resp.data
+
+
+# ---------------------------------------------------------------------------
+# Porteiro Encomendas tests
+# ---------------------------------------------------------------------------
+
+class TestPorteiroEncomendas:
+    def test_encomendas_loads(self, client):
+        _login(client, "porteiro", "porteiro123")
+        resp = client.get("/porteiro/encomendas")
         assert resp.status_code == 200
         assert "Registrar".encode() in resp.data
 
@@ -112,14 +129,17 @@ class TestPorteiro:
 
     def test_pickup_package(self, client):
         _login(client, "porteiro", "porteiro123")
-        # Register a package first
         client.post(
             "/porteiro/registrar",
             data={"apartment": "102", "description": "Mercado Livre", "locker": "B2"},
         )
-        # Pick it up
-        resp = client.get("/porteiro/retirar/1", follow_redirects=True)
+        resp = client.post("/porteiro/retirar/1", follow_redirects=True)
         assert resp.status_code == 200
+
+    def test_pickup_nonexistent(self, client):
+        _login(client, "porteiro", "porteiro123")
+        resp = client.post("/porteiro/retirar/999", follow_redirects=True)
+        assert "não encontrada".encode() in resp.data
 
     def test_historico_csv(self, client):
         _login(client, "porteiro", "porteiro123")
@@ -137,6 +157,106 @@ class TestPorteiro:
         resp = client.get("/porteiro", follow_redirects=True)
         assert "não autorizado".encode() in resp.data
 
+    def test_notify_package(self, client):
+        _login(client, "porteiro", "porteiro123")
+        client.post(
+            "/porteiro/registrar",
+            data={"apartment": "101", "description": "Shopee", "locker": "D4"},
+        )
+        resp = client.post("/porteiro/notificar/1", follow_redirects=True)
+        assert resp.status_code == 200
+
+
+# ---------------------------------------------------------------------------
+# Porteiro User Management tests
+# ---------------------------------------------------------------------------
+
+class TestPorteiroUsuarios:
+    def test_list_users(self, client):
+        _login(client, "porteiro", "porteiro123")
+        resp = client.get("/porteiro/usuarios")
+        assert resp.status_code == 200
+        assert "porteiro".encode() in resp.data
+
+    def test_create_user(self, client):
+        _login(client, "porteiro", "porteiro123")
+        resp = client.post(
+            "/porteiro/usuarios/novo",
+            data={
+                "username": "301", "password": "pass123",
+                "role": "morador", "email": "m301@test.com",
+                "apartment": "301", "name": "Test User",
+                "phone": "11999990000", "block": "C",
+            },
+            follow_redirects=True,
+        )
+        assert resp.status_code == 200
+        assert "301".encode() in resp.data
+
+    def test_create_user_duplicate(self, client):
+        _login(client, "porteiro", "porteiro123")
+        resp = client.post(
+            "/porteiro/usuarios/novo",
+            data={
+                "username": "101", "password": "pass",
+                "role": "morador", "email": "", "apartment": "101",
+                "name": "", "phone": "", "block": "",
+            },
+            follow_redirects=True,
+        )
+        assert "já existe".encode() in resp.data
+
+    def test_edit_user(self, client):
+        _login(client, "porteiro", "porteiro123")
+        resp = client.get("/porteiro/usuarios/2/editar")
+        assert resp.status_code == 200
+        resp = client.post(
+            "/porteiro/usuarios/2/editar",
+            data={
+                "email": "new@test.com", "apartment": "101",
+                "name": "Updated", "phone": "1100000",
+                "block": "A", "role": "morador", "password": "",
+            },
+            follow_redirects=True,
+        )
+        assert resp.status_code == 200
+        assert "atualizado".encode() in resp.data
+
+    def test_delete_user(self, client):
+        _login(client, "porteiro", "porteiro123")
+        resp = client.post("/porteiro/usuarios/3/excluir", follow_redirects=True)
+        assert resp.status_code == 200
+        assert "excluído".encode() in resp.data
+
+    def test_cannot_delete_self(self, client):
+        _login(client, "porteiro", "porteiro123")
+        resp = client.post("/porteiro/usuarios/1/excluir", follow_redirects=True)
+        assert "não pode excluir".encode() in resp.data
+
+
+# ---------------------------------------------------------------------------
+# Porteiro Email Management tests
+# ---------------------------------------------------------------------------
+
+class TestPorteiroEmails:
+    def test_email_log_page(self, client):
+        _login(client, "porteiro", "porteiro123")
+        resp = client.get("/porteiro/emails")
+        assert resp.status_code == 200
+        assert "E-mails".encode() in resp.data
+
+
+# ---------------------------------------------------------------------------
+# Porteiro Reports tests
+# ---------------------------------------------------------------------------
+
+class TestPorteiroRelatorios:
+    def test_reports_page(self, client):
+        _login(client, "porteiro", "porteiro123")
+        resp = client.get("/porteiro/relatorios")
+        assert resp.status_code == 200
+        assert "Relatórios".encode() in resp.data or "Estat".encode() in resp.data
+
 
 # ---------------------------------------------------------------------------
 # Morador routes tests
@@ -150,7 +270,6 @@ class TestMorador:
         assert "Minhas Encomendas".encode() in resp.data
 
     def test_confirm_pickup(self, client):
-        # Porteiro registers a package
         _login(client, "porteiro", "porteiro123")
         client.post(
             "/porteiro/registrar",
@@ -158,14 +277,12 @@ class TestMorador:
         )
         client.get("/logout")
 
-        # Morador confirms pickup
         _login(client, "101", "morador123")
         resp = client.post("/morador/confirmar/1", follow_redirects=True)
         assert resp.status_code == 200
         assert "Confirmado".encode() in resp.data or "confirmada".encode() in resp.data
 
     def test_cannot_confirm_other_apartment(self, client):
-        # Porteiro registers for apt 102
         _login(client, "porteiro", "porteiro123")
         client.post(
             "/porteiro/registrar",
@@ -173,7 +290,6 @@ class TestMorador:
         )
         client.get("/logout")
 
-        # Morador 101 tries to confirm apt 102's package
         _login(client, "101", "morador123")
         resp = client.post("/morador/confirmar/1", follow_redirects=True)
         assert "não encontrada".encode() in resp.data
@@ -211,3 +327,10 @@ class TestModels:
         from models import User
         assert User.get_by_username("nobody") is None
         assert User.get_by_id(9999) is None
+
+    def test_user_has_extended_fields(self):
+        from models import User
+        user = User.get_by_username("porteiro")
+        assert hasattr(user, "name")
+        assert hasattr(user, "phone")
+        assert hasattr(user, "block")

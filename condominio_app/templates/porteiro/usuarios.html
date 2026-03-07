@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Usuários — Portaria{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="page-header mb-0">
+        <i class="bi bi-people me-2"></i>Gerenciar Usuários
+    </h2>
+    <a href="{{ url_for('porteiro_usuario_novo') }}" class="btn btn-primary rounded-pill px-4">
+        <i class="bi bi-person-plus me-1"></i> Novo Usuário
+    </a>
+</div>
+
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th><i class="bi bi-person me-1"></i> Nome</th>
+                    <th><i class="bi bi-at me-1"></i> Usuário</th>
+                    <th><i class="bi bi-shield me-1"></i> Papel</th>
+                    <th><i class="bi bi-building me-1"></i> Apto / Bloco</th>
+                    <th><i class="bi bi-envelope me-1"></i> E-mail</th>
+                    <th><i class="bi bi-telephone me-1"></i> Telefone</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in users %}
+                <tr>
+                    <td><strong>{{ u.name or '—' }}</strong></td>
+                    <td>{{ u.username }}</td>
+                    <td>
+                        {% if u.role == 'porteiro' %}
+                            <span class="badge bg-dark rounded-pill"><i class="bi bi-shield-lock me-1"></i>Porteiro</span>
+                        {% else %}
+                            <span class="badge bg-primary rounded-pill"><i class="bi bi-house me-1"></i>Morador</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if u.apartment %}{{ u.apartment }}{% endif %}
+                        {% if u.block %} / Bloco {{ u.block }}{% endif %}
+                        {% if not u.apartment and not u.block %}—{% endif %}
+                    </td>
+                    <td><small>{{ u.email or '—' }}</small></td>
+                    <td><small>{{ u.phone or '—' }}</small></td>
+                    <td>
+                        <div class="d-flex gap-1">
+                            <a href="{{ url_for('porteiro_usuario_editar', user_id=u.id) }}"
+                               class="btn btn-outline-primary btn-sm" title="Editar">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <form method="post" action="{{ url_for('porteiro_usuario_excluir', user_id=u.id) }}"
+                                  class="d-inline" onsubmit="return confirm('Tem certeza que deseja excluir este usuário?')">
+                                <button type="submit" class="btn btn-outline-danger btn-sm" title="Excluir">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% if not users %}
+                <tr>
+                    <td colspan="7" class="text-center text-muted py-5">
+                        <i class="bi bi-people fs-1 d-block mb-2 opacity-50"></i>
+                        Nenhum usuário cadastrado
+                    </td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

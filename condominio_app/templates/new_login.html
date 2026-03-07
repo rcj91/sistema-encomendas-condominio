@@ -1,33 +1,105 @@
 {% extends "base.html" %}
 {% block title %}Login — Encomendas{% endblock %}
 
+{% block extra_css %}
+<style>
+    body { background: var(--primary-gradient); min-height: 100vh; }
+    .navbar { display: none; }
+    footer { display: none; }
+    .login-card {
+        border-radius: 20px;
+        backdrop-filter: blur(10px);
+        background: rgba(255, 255, 255, 0.95);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+    }
+    .login-header {
+        background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+        padding: 2rem;
+        text-align: center;
+        color: #fff;
+    }
+    .login-header .icon-circle {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.15);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 0.75rem;
+    }
+    .login-header .icon-circle i {
+        font-size: 1.8rem;
+    }
+    .login-body {
+        padding: 2rem 2.5rem 2.5rem;
+    }
+    .login-body .form-floating {
+        margin-bottom: 1rem;
+    }
+    .login-body .form-floating .form-control {
+        border-radius: 10px;
+        height: 3.2rem;
+    }
+    .login-body .form-floating label {
+        color: #6c757d;
+    }
+    .login-body .btn-login {
+        height: 3rem;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 10px;
+        background: var(--primary-gradient);
+        border: none;
+        letter-spacing: 0.5px;
+    }
+    .login-body .btn-login:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+    }
+    .login-footer {
+        font-size: 0.82rem;
+        color: #6c757d;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="row justify-content-center mt-5">
-    <div class="col-md-5">
-        <div class="card">
-            <div class="card-body p-4">
-                <h3 class="card-title text-center mb-4">📦 Acesso ao Sistema</h3>
-
+<div class="row justify-content-center align-items-center" style="min-height: 90vh;">
+    <div class="col-11 col-sm-8 col-md-5 col-lg-4">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="icon-circle">
+                    <i class="bi bi-box-seam-fill"></i>
+                </div>
+                <h4 class="mb-1 fw-bold">Sistema de Encomendas</h4>
+                <p class="mb-0 opacity-75 small">Acesse sua conta para continuar</p>
+            </div>
+            <div class="login-body">
                 <form method="post" action="{{ url_for('login') }}">
-                    <div class="mb-3">
-                        <label for="username" class="form-label">Usuário</label>
+                    <div class="form-floating">
                         <input type="text" class="form-control" id="username" name="username"
-                               placeholder="Porteiro ou nº do apartamento" required autofocus>
+                               placeholder="Usuário" required autofocus>
+                        <label for="username"><i class="bi bi-person me-1"></i> Usuário</label>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Senha</label>
+                    <div class="form-floating">
                         <input type="password" class="form-control" id="password" name="password"
-                               placeholder="Sua senha" required>
+                               placeholder="Senha" required>
+                        <label for="password"><i class="bi bi-lock me-1"></i> Senha</label>
                     </div>
 
-                    <button type="submit" class="btn btn-primary w-100">Entrar</button>
+                    <button type="submit" class="btn btn-primary btn-login w-100 mt-2">
+                        <i class="bi bi-arrow-right-circle me-1"></i> Entrar
+                    </button>
                 </form>
 
-                <hr>
-                <p class="text-muted text-center small mb-0">
-                    Porteiro: use seu login &bull; Morador: use o nº do apartamento
-                </p>
+                <div class="text-center mt-3 login-footer">
+                    <i class="bi bi-info-circle me-1"></i>
+                    <strong>Porteiro:</strong> use seu login &bull;
+                    <strong>Morador:</strong> use o nº do apartamento
+                </div>
             </div>
         </div>
     </div>

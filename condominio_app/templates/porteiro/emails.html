@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}E-mails Enviados — Portaria{% endblock %}
+
+{% block content %}
+<h2 class="page-header">
+    <i class="bi bi-envelope-paper me-2"></i>Histórico de E-mails
+</h2>
+
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th><i class="bi bi-calendar me-1"></i> Data/Hora</th>
+                    <th><i class="bi bi-person me-1"></i> Destinatário</th>
+                    <th><i class="bi bi-building me-1"></i> Apto</th>
+                    <th><i class="bi bi-chat-text me-1"></i> Assunto</th>
+                    <th><i class="bi bi-flag me-1"></i> Status</th>
+                    <th><i class="bi bi-lightning me-1"></i> Origem</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                <tr>
+                    <td><small>{{ log.sent_at }}</small></td>
+                    <td><small>{{ log.recipient_email }}</small></td>
+                    <td><strong>{{ log.apartment or '—' }}</strong></td>
+                    <td>{{ log.subject }}</td>
+                    <td>
+                        {% if log.status == 'sent' %}
+                            <span class="badge bg-success rounded-pill">
+                                <i class="bi bi-check-circle me-1"></i>Enviado
+                            </span>
+                        {% else %}
+                            <span class="badge bg-danger rounded-pill">
+                                <i class="bi bi-x-circle me-1"></i>Falha
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="badge bg-light text-dark border">{{ log.triggered_by or 'sistema' }}</span>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% if not logs %}
+                <tr>
+                    <td colspan="6" class="text-center text-muted py-5">
+                        <i class="bi bi-envelope fs-1 d-block mb-2 opacity-50"></i>
+                        Nenhum e-mail enviado ainda
+                    </td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

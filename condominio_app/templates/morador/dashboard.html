@@ -2,63 +2,106 @@
 {% block title %}Minhas Encomendas — Apto {{ current_user.apartment }}{% endblock %}
 
 {% block content %}
-<h2 class="mb-4">📦 Minhas Encomendas — Apto {{ current_user.apartment }}</h2>
+<h2 class="page-header">
+    <i class="bi bi-house-door me-2"></i>Minhas Encomendas — Apto {{ current_user.apartment }}
+</h2>
+
+<!-- Summary -->
+<div class="row g-3 mb-4">
+    <div class="col-md-6">
+        <div class="stat-card p-3" style="background: var(--info-gradient);">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="stat-label mb-1">Pendentes</div>
+                    <div class="stat-value">{{ pending|length }}</div>
+                </div>
+                <div class="stat-icon"><i class="bi bi-mailbox2"></i></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="stat-card p-3" style="background: var(--success-gradient);">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="stat-label mb-1">Retiradas Recentes</div>
+                    <div class="stat-value">{{ history|length }}</div>
+                </div>
+                <div class="stat-icon"><i class="bi bi-check2-square"></i></div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Pending Packages -->
 <div class="card mb-4">
-    <div class="card-header bg-primary text-white">
-        <h5 class="mb-0">📬 Encomendas Pendentes</h5>
+    <div class="card-header border-0 py-3" style="background: var(--primary-gradient); border-radius: 12px 12px 0 0;">
+        <h5 class="mb-0 text-white fw-bold">
+            <i class="bi bi-envelope-paper me-2"></i>Encomendas Pendentes
+        </h5>
     </div>
-    <div class="card-body">
+    <div class="card-body p-0">
         {% if pending %}
-        <div class="list-group">
             {% for p in pending %}
-            <div class="list-group-item d-flex justify-content-between align-items-center">
-                <div>
-                    <strong>{{ p.description }}</strong>
-                    <br>
-                    <small class="text-muted">
-                        Chegou em {{ p.arrival_date }} &bull;
-                        Armário: {{ p.locker or '—' }} &bull;
-                        {{ p.dias }} dia(s)
-                    </small>
+            <div class="d-flex justify-content-between align-items-center p-3 {% if not loop.last %}border-bottom{% endif %}">
+                <div class="d-flex align-items-center">
+                    <div class="rounded-3 p-2 me-3" style="background: rgba(102, 126, 234, 0.1);">
+                        <i class="bi bi-box-seam fs-4 text-primary"></i>
+                    </div>
+                    <div>
+                        <strong class="d-block">{{ p.description }}</strong>
+                        <small class="text-muted">
+                            <i class="bi bi-calendar3 me-1"></i>{{ p.arrival_date }}
+                            <span class="mx-1">•</span>
+                            <i class="bi bi-archive me-1"></i>{{ p.locker or 'Sem armário' }}
+                            <span class="mx-1">•</span>
+                            <span class="badge {% if p.dias > 5 %}bg-danger{% elif p.dias > 3 %}bg-warning text-dark{% else %}bg-success{% endif %} rounded-pill">
+                                {{ p.dias }} dia(s)
+                            </span>
+                        </small>
+                    </div>
                 </div>
                 <div>
                     {% if p.status == 'confirmed' %}
-                        <span class="badge bg-info">✅ Confirmado</span>
+                        <span class="badge bg-info rounded-pill px-3 py-2">
+                            <i class="bi bi-check-circle-fill me-1"></i>Confirmado
+                        </span>
                     {% else %}
                         <form method="post" action="{{ url_for('morador_confirmar', package_id=p.id) }}" class="d-inline">
-                            <button type="submit" class="btn btn-success btn-sm">
-                                ✍️ Confirmar Retirada
+                            <button type="submit" class="btn btn-success btn-sm rounded-pill px-3">
+                                <i class="bi bi-pen me-1"></i>Confirmar Retirada
                             </button>
                         </form>
                     {% endif %}
                 </div>
             </div>
             {% endfor %}
-        </div>
         {% else %}
-        <p class="text-muted text-center mb-0">Nenhuma encomenda pendente 🎉</p>
+            <div class="text-center text-muted py-5">
+                <i class="bi bi-emoji-smile fs-1 d-block mb-2 opacity-50"></i>
+                Nenhuma encomenda pendente
+            </div>
         {% endif %}
     </div>
 </div>
 
 <!-- History -->
 <div class="card">
-    <div class="card-header bg-secondary text-white">
-        <h5 class="mb-0">📋 Histórico de Retiradas</h5>
+    <div class="card-header border-0 py-3" style="background: linear-gradient(135deg, #4a5568 0%, #718096 100%); border-radius: 12px 12px 0 0;">
+        <h5 class="mb-0 text-white fw-bold">
+            <i class="bi bi-clock-history me-2"></i>Histórico de Retiradas
+        </h5>
     </div>
-    <div class="card-body">
+    <div class="card-body p-0">
         {% if history %}
         <div class="table-responsive">
-            <table class="table table-sm table-striped mb-0">
+            <table class="table table-hover mb-0">
                 <thead>
-                    <tr>
-                        <th>Descrição</th>
-                        <th>Armário</th>
-                        <th>Chegada</th>
-                        <th>Retirada</th>
-                        <th>Confirmado por</th>
+                    <tr style="background: #f8f9fa;">
+                        <th class="fw-semibold text-muted small text-uppercase" style="border: none; padding: 0.75rem 1rem;">Descrição</th>
+                        <th class="fw-semibold text-muted small text-uppercase" style="border: none; padding: 0.75rem 1rem;">Armário</th>
+                        <th class="fw-semibold text-muted small text-uppercase" style="border: none; padding: 0.75rem 1rem;">Chegada</th>
+                        <th class="fw-semibold text-muted small text-uppercase" style="border: none; padding: 0.75rem 1rem;">Retirada</th>
+                        <th class="fw-semibold text-muted small text-uppercase" style="border: none; padding: 0.75rem 1rem;">Confirmado por</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -66,16 +109,27 @@
                     <tr>
                         <td>{{ p.description }}</td>
                         <td>{{ p.locker or '—' }}</td>
-                        <td>{{ p.arrival_date }}</td>
-                        <td>{{ p.pickup_date or '—' }}</td>
-                        <td>{{ p.confirmed_by or '—' }}</td>
+                        <td><small>{{ p.arrival_date }}</small></td>
+                        <td><small>{{ p.pickup_date or '—' }}</small></td>
+                        <td>
+                            {% if p.confirmed_by %}
+                                <span class="badge bg-light text-dark border">
+                                    <i class="bi bi-person-check me-1"></i>{{ p.confirmed_by }}
+                                </span>
+                            {% else %}
+                                <span class="text-muted">—</span>
+                            {% endif %}
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
         {% else %}
-        <p class="text-muted text-center mb-0">Nenhuma retirada registrada ainda.</p>
+            <div class="text-center text-muted py-5">
+                <i class="bi bi-journal-text fs-1 d-block mb-2 opacity-50"></i>
+                Nenhuma retirada registrada ainda
+            </div>
         {% endif %}
     </div>
 </div>

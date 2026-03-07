@@ -5,7 +5,8 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 class Config:
     # In production, set SECRET_KEY via environment variable to persist sessions
-    # across restarts. The fallback random key is suitable for POC/development.
+    # across restarts. The fallback is a static placeholder suitable only for
+    # local development/POC usage.
     SECRET_KEY = os.environ.get("SECRET_KEY", "poc-dev-secret-change-in-production")
     DATABASE = os.path.join(BASE_DIR, "database.db")
 

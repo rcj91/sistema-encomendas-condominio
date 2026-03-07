@@ -13,9 +13,10 @@ from flask_login import (
     login_user,
     logout_user,
 )
+from werkzeug.security import generate_password_hash
 
 from config import Config
-from email_service import init_mail, send_package_arrival
+from email_service import init_mail, send_package_arrival, send_pending_reminder
 from models import User, get_db, init_db
 from scheduler import init_scheduler
 
@@ -103,32 +104,90 @@ def logout():
 
 
 # ---------------------------------------------------------------------------
-# Porteiro routes
+# Porteiro — Dashboard
 # ---------------------------------------------------------------------------
 
 @app.route("/porteiro")
 @role_required("porteiro")
 def porteiro_dashboard():
+    conn = get_db()
+
+    # Stats
+    total_pending = conn.execute(
+        "SELECT COUNT(*) as c FROM packages WHERE status IN ('arrived','confirmed')"
+    ).fetchone()["c"]
+    total_today = conn.execute(
+        "SELECT COUNT(*) as c FROM packages WHERE date(arrival_date)=date('now')"
+    ).fetchone()["c"]
+    total_overdue = conn.execute(
+        "SELECT COUNT(*) as c FROM packages WHERE status IN ('arrived','confirmed') "
+        "AND julianday('now')-julianday(arrival_date) > 5"
+    ).fetchone()["c"]
+    total_picked = conn.execute(
+        "SELECT COUNT(*) as c FROM packages WHERE status='picked_up'"
+    ).fetchone()["c"]
+    total_users = conn.execute(
+        "SELECT COUNT(*) as c FROM users WHERE role='morador'"
+    ).fetchone()["c"]
+    total_emails = conn.execute(
+        "SELECT COUNT(*) as c FROM email_logs"
+    ).fetchone()["c"]
+
+    # Recent packages (last 10)
+    recent = conn.execute(
+        """SELECT * FROM packages ORDER BY arrival_date DESC LIMIT 10"""
+    ).fetchall()
+    conn.close()
+
+    recent_list = []
+    for r in recent:
+        arrival = datetime.fromisoformat(r["arrival_date"])
+        dias = (datetime.now() - arrival).days
+        recent_list.append({
+            "id": r["id"],
+            "apartment": r["apartment"],
+            "description": r["description"],
+            "arrival": r["arrival_date"],
+            "locker": r["locker"],
+            "dias": dias,
+            "status": r["status"],
+        })
+
+    stats = {
+        "total_pending": total_pending,
+        "total_today": total_today,
+        "total_overdue": total_overdue,
+        "total_picked": total_picked,
+        "total_users": total_users,
+        "total_emails": total_emails,
+    }
+    return render_template("porteiro/dashboard.html", stats=stats, recent=recent_list)
+
+
+# ---------------------------------------------------------------------------
+# Porteiro — Encomendas (Packages CRUD)
+# ---------------------------------------------------------------------------
+
+@app.route("/porteiro/encomendas")
+@role_required("porteiro")
+def porteiro_encomendas():
     q = request.args.get("q", "").strip()
     conn = get_db()
-    cursor = conn.cursor()
 
     if q:
-        cursor.execute(
+        rows = conn.execute(
             """SELECT * FROM packages
                WHERE status IN ('arrived', 'confirmed')
                AND (apartment LIKE ? OR description LIKE ?)
                ORDER BY arrival_date""",
             (f"%{q}%", f"%{q}%"),
-        )
+        ).fetchall()
     else:
-        cursor.execute(
+        rows = conn.execute(
             """SELECT * FROM packages
                WHERE status IN ('arrived', 'confirmed')
                ORDER BY arrival_date"""
-        )
-
-    rows = cursor.fetchall()
+        ).fetchall()
     conn.close()
 
     packages = []
@@ -165,9 +224,9 @@ def porteiro_dashboard():
             "confirmed_at": r["confirmed_at"],
         })
 
-    stats = {"total": total, "hoje": hoje, "atrasadas": atrasadas}
+    pkg_stats = {"total": total, "hoje": hoje, "atrasadas": atrasadas}
     return render_template(
-        "porteiro/dashboard.html", packages=packages, stats=stats, q=q
+        "porteiro/encomendas.html", packages=packages, stats=pkg_stats, q=q
     )
 
 
@@ -180,7 +239,7 @@ def porteiro_registrar():
 
     if not apt or not desc:
         flash("Apartamento e descrição são obrigatórios.", "warning")
-        return redirect(url_for("porteiro_dashboard"))
+        return redirect(url_for("porteiro_encomendas"))
 
     conn = get_db()
     conn.execute(
@@ -194,16 +253,30 @@ def porteiro_registrar():
     # Send email notification to resident
     resident = User.get_by_apartment(apt)
     if resident and resident.email:
-        send_package_arrival(resident.email, apt, desc)
+        send_package_arrival(resident.email, apt, desc, triggered_by="registro")
 
     flash(f"Encomenda registrada para o apartamento {apt}.", "success")
-    return redirect(url_for("porteiro_dashboard"))
+    return redirect(url_for("porteiro_encomendas"))
 
 
-@app.route("/porteiro/retirar/<int:package_id>")
+@app.route("/porteiro/retirar/<int:package_id>", methods=["POST"])
 @role_required("porteiro")
 def porteiro_retirar(package_id):
     conn = get_db()
+    pkg = conn.execute(
+        "SELECT * FROM packages WHERE id = ?", (package_id,)
+    ).fetchone()
+
+    if not pkg:
+        flash("Encomenda não encontrada.", "danger")
+        conn.close()
+        return redirect(url_for("porteiro_encomendas"))
+
+    if pkg["status"] == "picked_up":
+        flash("Esta encomenda já foi retirada.", "info")
+        conn.close()
+        return redirect(url_for("porteiro_encomendas"))
+
     conn.execute(
         """UPDATE packages SET status='picked_up', pickup_date=?
            WHERE id=?""",
@@ -212,7 +285,50 @@ def porteiro_retirar(package_id):
     conn.commit()
     conn.close()
     flash("Retirada registrada com sucesso.", "success")
-    return redirect(url_for("porteiro_dashboard"))
+    return redirect(url_for("porteiro_encomendas"))
+
+
+@app.route("/porteiro/notificar/<int:package_id>", methods=["POST"])
+@role_required("porteiro")
+def porteiro_notificar(package_id):
+    """Manually send an email reminder for a specific package."""
+    conn = get_db()
+    pkg = conn.execute(
+        "SELECT * FROM packages WHERE id = ?", (package_id,)
+    ).fetchone()
+
+    if not pkg:
+        flash("Encomenda não encontrada.", "danger")
+        conn.close()
+        return redirect(url_for("porteiro_encomendas"))
+
+    if pkg["status"] == "picked_up":
+        flash("Esta encomenda já foi retirada.", "info")
+        conn.close()
+        return redirect(url_for("porteiro_encomendas"))
+
+    apt = pkg["apartment"]
+    resident = User.get_by_apartment(apt)
+
+    if not resident or not resident.email:
+        flash(f"Morador do apto {apt} não possui e-mail cadastrado.", "warning")
+        conn.close()
+        return redirect(url_for("porteiro_encomendas"))
+
+    arrival = datetime.fromisoformat(pkg["arrival_date"])
+    dias = (datetime.now() - arrival).days
+    packages_info = [{
+        "description": pkg["description"],
+        "arrival_date": pkg["arrival_date"],
+        "dias": dias,
+    }]
+    send_pending_reminder(
+        resident.email, apt, packages_info, triggered_by="manual (porteiro)"
+    )
+
+    flash(f"Notificação enviada por e-mail para o morador do apto {apt}.", "success")
+    conn.close()
+    return redirect(url_for("porteiro_encomendas"))
 
 
 @app.route("/porteiro/historico")
@@ -251,6 +367,182 @@ def porteiro_historico():
         "\ufeff" + csv_data,
         mimetype="text/csv",
         headers={"Content-Disposition": "attachment; filename=historico_encomendas.csv"},
+    )
+
+
+# ---------------------------------------------------------------------------
+# Porteiro — User Management
+# ---------------------------------------------------------------------------
+
+@app.route("/porteiro/usuarios")
+@role_required("porteiro")
+def porteiro_usuarios():
+    conn = get_db()
+    users = conn.execute(
+        "SELECT * FROM users ORDER BY role, apartment, username"
+    ).fetchall()
+    conn.close()
+    return render_template("porteiro/usuarios.html", users=users)
+
+
+@app.route("/porteiro/usuarios/novo", methods=["GET", "POST"])
+@role_required("porteiro")
+def porteiro_usuario_novo():
+    if request.method == "POST":
+        username = request.form.get("username", "").strip()
+        password = request.form.get("password", "").strip()
+        role = request.form.get("role", "morador")
+        email = request.form.get("email", "").strip()
+        apartment = request.form.get("apartment", "").strip()
+        name = request.form.get("name", "").strip()
+        phone = request.form.get("phone", "").strip()
+        block = request.form.get("block", "").strip()
+
+        if not username or not password:
+            flash("Usuário e senha são obrigatórios.", "warning")
+            return render_template("porteiro/usuario_form.html", user=None)
+
+        if User.get_by_username(username):
+            flash("Este nome de usuário já existe.", "danger")
+            return render_template("porteiro/usuario_form.html", user=None)
+
+        conn = get_db()
+        conn.execute(
+            """INSERT INTO users
+               (username, password_hash, role, email, apartment, name, phone, block)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+            (username, generate_password_hash(password), role, email,
+             apartment, name, phone, block),
+        )
+        conn.commit()
+        conn.close()
+        flash(f"Usuário '{username}' criado com sucesso.", "success")
+        return redirect(url_for("porteiro_usuarios"))
+
+    return render_template("porteiro/usuario_form.html", user=None)
+
+
+@app.route("/porteiro/usuarios/<int:user_id>/editar", methods=["GET", "POST"])
+@role_required("porteiro")
+def porteiro_usuario_editar(user_id):
+    conn = get_db()
+    row = conn.execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
+
+    if not row:
+        conn.close()
+        flash("Usuário não encontrado.", "danger")
+        return redirect(url_for("porteiro_usuarios"))
+
+    if request.method == "POST":
+        email = request.form.get("email", "").strip()
+        apartment = request.form.get("apartment", "").strip()
+        name = request.form.get("name", "").strip()
+        phone = request.form.get("phone", "").strip()
+        block = request.form.get("block", "").strip()
+        role = request.form.get("role", row["role"])
+        new_password = request.form.get("password", "").strip()
+
+        if new_password:
+            conn.execute(
+                """UPDATE users SET email=?, apartment=?, name=?, phone=?,
+                   block=?, role=?, password_hash=? WHERE id=?""",
+                (email, apartment, name, phone, block, role,
+                 generate_password_hash(new_password), user_id),
+            )
+        else:
+            conn.execute(
+                """UPDATE users SET email=?, apartment=?, name=?, phone=?,
+                   block=?, role=? WHERE id=?""",
+                (email, apartment, name, phone, block, role, user_id),
+            )
+        conn.commit()
+        conn.close()
+        flash("Usuário atualizado com sucesso.", "success")
+        return redirect(url_for("porteiro_usuarios"))
+
+    conn.close()
+    return render_template("porteiro/usuario_form.html", user=dict(row))
+
+
+@app.route("/porteiro/usuarios/<int:user_id>/excluir", methods=["POST"])
+@role_required("porteiro")
+def porteiro_usuario_excluir(user_id):
+    if user_id == current_user.id:
+        flash("Você não pode excluir seu próprio usuário.", "danger")
+        return redirect(url_for("porteiro_usuarios"))
+
+    conn = get_db()
+    conn.execute("DELETE FROM users WHERE id = ?", (user_id,))
+    conn.commit()
+    conn.close()
+    flash("Usuário excluído com sucesso.", "success")
+    return redirect(url_for("porteiro_usuarios"))
+
+
+# ---------------------------------------------------------------------------
+# Porteiro — Email Management
+# ---------------------------------------------------------------------------
+
+@app.route("/porteiro/emails")
+@role_required("porteiro")
+def porteiro_emails():
+    conn = get_db()
+    logs = conn.execute(
+        "SELECT * FROM email_logs ORDER BY sent_at DESC LIMIT 100"
+    ).fetchall()
+    conn.close()
+    return render_template("porteiro/emails.html", logs=logs)
+
+
+# ---------------------------------------------------------------------------
+# Porteiro — Reports
+# ---------------------------------------------------------------------------
+
+@app.route("/porteiro/relatorios")
+@role_required("porteiro")
+def porteiro_relatorios():
+    conn = get_db()
+
+    # Packages per apartment
+    per_apt = conn.execute(
+        """SELECT apartment, COUNT(*) as total,
+                  SUM(CASE WHEN status='picked_up' THEN 1 ELSE 0 END) as retiradas,
+                  SUM(CASE WHEN status IN ('arrived','confirmed') THEN 1 ELSE 0 END) as pendentes
+           FROM packages GROUP BY apartment ORDER BY total DESC"""
+    ).fetchall()
+
+    # Average time to pickup
+    avg_time = conn.execute(
+        """SELECT ROUND(AVG(julianday(pickup_date)-julianday(arrival_date)), 1) as avg_days
+           FROM packages WHERE status='picked_up' AND pickup_date IS NOT NULL"""
+    ).fetchone()
+
+    # Monthly volume
+    monthly = conn.execute(
+        """SELECT strftime('%Y-%m', arrival_date) as month, COUNT(*) as total
+           FROM packages GROUP BY month ORDER BY month DESC LIMIT 12"""
+    ).fetchall()
+
+    # Top carriers
+    top_carriers = conn.execute(
+        """SELECT description, COUNT(*) as total
+           FROM packages GROUP BY description ORDER BY total DESC LIMIT 10"""
+    ).fetchall()
+
+    # Status breakdown
+    status_breakdown = conn.execute(
+        """SELECT status, COUNT(*) as total FROM packages GROUP BY status"""
+    ).fetchall()
+
+    conn.close()
+
+    return render_template(
+        "porteiro/relatorios.html",
+        per_apt=per_apt,
+        avg_days=avg_time["avg_days"] if avg_time["avg_days"] else 0,
+        monthly=monthly,
+        top_carriers=top_carriers,
+        status_breakdown=status_breakdown,
     )
 
 
@@ -335,7 +627,7 @@ def morador_confirmar(package_id):
     conn.commit()
     conn.close()
 
-    flash("Retirada confirmada digitalmente! ✅", "success")
+    flash("Retirada confirmada digitalmente!", "success")
     return redirect(url_for("morador_dashboard"))
 
 

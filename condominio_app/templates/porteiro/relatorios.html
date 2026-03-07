@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+{% block title %}Relatórios — Portaria{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="page-header mb-0">
+        <i class="bi bi-graph-up me-2"></i>Relatórios e Estatísticas
+    </h2>
+    <a class="btn btn-dark rounded-pill px-4" href="{{ url_for('porteiro_historico') }}">
+        <i class="bi bi-download me-1"></i> Exportar CSV
+    </a>
+</div>
+
+<!-- KPIs -->
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="stat-card p-3" style="background: var(--info-gradient);">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="stat-label mb-1">Tempo Médio de Retirada</div>
+                    <div class="stat-value">{{ avg_days }}<small class="fs-6"> dias</small></div>
+                </div>
+                <div class="stat-icon"><i class="bi bi-clock-history"></i></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card p-3" style="background: var(--primary-gradient);">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="stat-label mb-1">Total de Apartamentos</div>
+                    <div class="stat-value">{{ per_apt|length }}</div>
+                </div>
+                <div class="stat-icon"><i class="bi bi-buildings"></i></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card p-3" style="background: var(--success-gradient);">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="stat-label mb-1">Empresas/Transportadoras</div>
+                    <div class="stat-value">{{ top_carriers|length }}</div>
+                </div>
+                <div class="stat-icon"><i class="bi bi-truck"></i></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Status Breakdown -->
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header border-0 py-3" style="background: var(--primary-gradient); border-radius: 12px 12px 0 0;">
+                <h5 class="mb-0 text-white fw-bold">
+                    <i class="bi bi-pie-chart me-2"></i>Distribuição por Status
+                </h5>
+            </div>
+            <div class="card-body">
+                {% for s in status_breakdown %}
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="d-flex align-items-center">
+                        {% if s.status == 'arrived' %}
+                            <span class="badge bg-warning text-dark me-2"><i class="bi bi-hourglass-split"></i></span>
+                            <span>Aguardando</span>
+                        {% elif s.status == 'confirmed' %}
+                            <span class="badge bg-info me-2"><i class="bi bi-check-circle"></i></span>
+                            <span>Confirmado</span>
+                        {% elif s.status == 'picked_up' %}
+                            <span class="badge bg-success me-2"><i class="bi bi-check2-all"></i></span>
+                            <span>Retirado</span>
+                        {% endif %}
+                    </div>
+                    <strong>{{ s.total }}</strong>
+                </div>
+                {% endfor %}
+                {% if not status_breakdown %}
+                <p class="text-muted text-center mb-0">Sem dados disponíveis</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Carriers -->
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header border-0 py-3" style="background: var(--success-gradient); border-radius: 12px 12px 0 0;">
+                <h5 class="mb-0 text-white fw-bold">
+                    <i class="bi bi-trophy me-2"></i>Empresas mais Frequentes
+                </h5>
+            </div>
+            <div class="card-body">
+                {% for c in top_carriers %}
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span>
+                        <i class="bi bi-box-seam text-muted me-2"></i>{{ c.description }}
+                    </span>
+                    <span class="badge bg-primary rounded-pill">{{ c.total }}</span>
+                </div>
+                {% endfor %}
+                {% if not top_carriers %}
+                <p class="text-muted text-center mb-0">Sem dados disponíveis</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Per Apartment -->
+<div class="card mt-4">
+    <div class="card-header border-0 py-3" style="background: var(--info-gradient); border-radius: 12px 12px 0 0;">
+        <h5 class="mb-0 text-white fw-bold">
+            <i class="bi bi-building me-2"></i>Encomendas por Apartamento
+        </h5>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr style="background: #f8f9fa;">
+                    <th class="fw-semibold text-muted small text-uppercase" style="border:none; padding: 0.75rem 1rem;">Apartamento</th>
+                    <th class="fw-semibold text-muted small text-uppercase" style="border:none; padding: 0.75rem 1rem;">Total</th>
+                    <th class="fw-semibold text-muted small text-uppercase" style="border:none; padding: 0.75rem 1rem;">Retiradas</th>
+                    <th class="fw-semibold text-muted small text-uppercase" style="border:none; padding: 0.75rem 1rem;">Pendentes</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for a in per_apt %}
+                <tr>
+                    <td><strong>{{ a.apartment }}</strong></td>
+                    <td>{{ a.total }}</td>
+                    <td><span class="badge bg-success rounded-pill">{{ a.retiradas }}</span></td>
+                    <td>
+                        {% if a.pendentes > 0 %}
+                            <span class="badge bg-warning text-dark rounded-pill">{{ a.pendentes }}</span>
+                        {% else %}
+                            <span class="badge bg-light text-muted rounded-pill">0</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+                {% if not per_apt %}
+                <tr>
+                    <td colspan="4" class="text-center text-muted py-4">Sem dados disponíveis</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Monthly Volume -->
+{% if monthly %}
+<div class="card mt-4">
+    <div class="card-header border-0 py-3" style="background: var(--warning-gradient); border-radius: 12px 12px 0 0;">
+        <h5 class="mb-0 text-white fw-bold">
+            <i class="bi bi-calendar-range me-2"></i>Volume Mensal
+        </h5>
+    </div>
+    <div class="card-body">
+        {% for m in monthly %}
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <span><i class="bi bi-calendar3 text-muted me-2"></i>{{ m.month }}</span>
+            <div class="d-flex align-items-center" style="width: 60%;">
+                <div class="progress flex-fill me-2" style="height: 8px; border-radius: 4px;">
+                    <div class="progress-bar" role="progressbar"
+                         style="width: {{ (m.total / monthly[0].total * 100) if monthly[0].total else 0 }}%; background: var(--primary-gradient);">
+                    </div>
+                </div>
+                <strong class="text-nowrap">{{ m.total }}</strong>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}

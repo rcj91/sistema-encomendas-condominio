@@ -116,7 +116,7 @@ condominio_app/
 ├── scheduler.py        # Agendador de tarefas (lembretes diários)
 ├── templates/
 │   ├── base.html       # Template base com navbar e layout
-│   ├── login.html      # Página de login unificada
+│   ├── new_login.html  # Página de login unificada
 │   ├── porteiro/
 │   │   └── dashboard.html  # Dashboard do porteiro
 │   └── morador/
@@ -193,7 +193,7 @@ condominio_app/
 | Senhas | Texto puro | Hash com Werkzeug (pbkdf2:sha256) |
 | Autenticação | Nenhuma | Flask-Login com sessões |
 | Autorização | Nenhuma | Decoradores por papel (role) |
-| CSRF | Nenhuma | Tokens em formulários |
+| CSRF | Nenhuma | Pendente (futuro: Flask-WTF) |
 | Debug | Habilitado | Desabilitado por padrão |
 | Secret Key | Nenhuma | Configurada e aleatória |
 
