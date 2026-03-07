@@ -125,29 +125,6 @@ def registrar():
 # Morador confirma retirada
 # -----------------------------------------
 
-# @app.route("/retirar/<int:id>")
-# def retirar(id):
-
-#     apt = request.args.get("apt")
-
-#     conn = conectar()
-#     cursor = conn.cursor()
-
-#     cursor.execute("""
-#     UPDATE packages
-#     SET status='morador_confirmou',
-#         pickup_date=?
-#     WHERE id=?
-#     """, (datetime.now(), id))
-
-#     conn.commit()
-#     conn.close()
-
-#     if apt:
-#         return redirect(f"/consultar?apt={apt}")
-
-#     return redirect("/")
-
 @app.route("/retirar/<int:id>", methods=["GET","POST"])
 def retirar(id):
 
