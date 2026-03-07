@@ -1,6 +1,7 @@
 import csv
 import io
 import logging
+import os
 from datetime import datetime
 from functools import wraps
 
@@ -344,4 +345,6 @@ def morador_confirmar(package_id):
 
 if __name__ == "__main__":
     init_scheduler(app)
-    app.run(debug=False, host="0.0.0.0", port=5000)
+    host = os.environ.get("FLASK_HOST", "127.0.0.1")
+    port = int(os.environ.get("FLASK_PORT", 5000))
+    app.run(debug=False, host=host, port=port)

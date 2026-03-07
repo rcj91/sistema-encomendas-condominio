@@ -4,7 +4,9 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 
 class Config:
-    SECRET_KEY = os.environ.get("SECRET_KEY", os.urandom(24).hex())
+    # In production, set SECRET_KEY via environment variable to persist sessions
+    # across restarts. The fallback random key is suitable for POC/development.
+    SECRET_KEY = os.environ.get("SECRET_KEY", "poc-dev-secret-change-in-production")
     DATABASE = os.path.join(BASE_DIR, "database.db")
 
     # Flask-Mail settings — configure with real SMTP for production
